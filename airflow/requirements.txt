@@ -1,0 +1,8 @@
+# Orchestration & Connection
+apache-airflow-providers-apache-spark
+apache-airflow-providers-amazon
+pyspark==3.4.1
+
+# Utilities
+python-dotenv
+boto3

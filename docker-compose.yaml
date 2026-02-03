@@ -52,7 +52,7 @@ x-airflow-common:
   # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.1.6}
   build:
     context: .
-    dockerfile: docker/airflow.Dockerfile
+    dockerfile: airflow/airflow.Dockerfile
   env_file:
     - ${ENV_FILE_PATH:-.env}
   environment:
@@ -93,6 +93,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
+    - ${AIRFLOW_PROJ_DIR:-.}/spark_jobs:/opt/spark_jobs
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -280,5 +281,33 @@ services:
       /usr/bin/mc mb myminio/processed-data || true;
       exit 0;
       "
+  spark-master:
+    build:
+      context: ./spark
+      dockerfile: spark.Dockerfile
+    container_name: spark-master
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - "9090:8080" # Web UI
+      - "7077:7077" # Communication
+    environment:
+      - SPARK_MASTER_HOST=spark-master
+    volumes:
+      - ./dags:/opt/spark/work-dir
+      - ./spark_jobs:/opt/spark_jobs
+
+  spark-worker:
+    build:
+      context: ./spark
+      dockerfile: spark.Dockerfile
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=1G
+    volumes:
+      - ./dags:/opt/spark/work-dir
+      - ./spark_jobs:/opt/spark_jobs
 volumes:
   postgres-db-volume:

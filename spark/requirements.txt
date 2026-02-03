@@ -1,0 +1,12 @@
+# Data Processing
+pandas
+pyarrow
+numpy
+great_expectations
+# Connectors & Formats
+delta-spark==2.4.0
+boto3
+
+# Table Formats (Optional but recommended for your pipeline)
+pyiceberg[s3fs]
+deltalake
