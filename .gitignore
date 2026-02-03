@@ -1,0 +1,54 @@
+# Byte-code files
+*.pyc
+__pycache__/
+# Use a wildcard to ignore all .pyc files in all directories
+*/__pycache__/*.pyc
+
+# Distribution / packaging
+.Python
+build/
+dist/
+wheels/
+*.egg-info/
+*.egg
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Editors
+.vscode/        # Visual Studio Code
+.idea/          # PyCharm / IntelliJ IDEA
+*.swp           # Vim swap files
+
+# Interpreter cellular automata
+*.py[cod]
+
+# Unit test / coverage
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Documentation
+docs/_build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Logs and databases
+*.log
+.sqlite
+.sqlite-journal
+config/airflow.cfg
+minio_data
+
+logs
+
+

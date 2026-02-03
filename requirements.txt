@@ -1,0 +1,13 @@
+requests
+pandas
+pyarrow
+boto3
+python-dotenv
+deltalake
+dotenv
+apache-airflow-providers-amazon
+pendulum
+pyiceberg[s3fs,hive,sql-sqlite]
+sqlalchemy>=2.0.0
+pytest
+pytest-airflow
