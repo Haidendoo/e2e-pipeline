@@ -363,6 +363,9 @@ To extend this pipeline:
 2. **Add Spark jobs:** Place scripts in `spark_jobs/`
 3. **Install packages:** Update `requirements.txt` and rebuild
 4. **Add services:** Update `docker-compose.yaml`
+## Current Bug
+
+The api server on http://localhost:8082/api/v2/dags is currently unavailble
 
 ## 📝 License
 
