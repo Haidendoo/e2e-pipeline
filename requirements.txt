@@ -14,3 +14,4 @@ pytest-airflow
 apache-airflow-providers-apache-spark
 pyspark==3.4.1
 confluent-kafka
+kafka-python
