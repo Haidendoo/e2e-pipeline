@@ -54,6 +54,25 @@ def submit_spark_job():
         raise Exception(f"Spark job failed with return code {result.returncode}")
     print("Spark job completed successfully!")
 
+# Submit Spark job to write Iceberg table to MinIO
+def write_iceberg_to_minio():
+    cmd = [
+        "spark-submit",
+        "--master", "local[2]",
+        "--packages", "org.apache.iceberg:iceberg-spark-runtime-3.4_2.12:1.4.3,org.apache.hadoop:hadoop-aws:3.3.4",
+        "/opt/spark_jobs/iceberg_write_job.py"
+    ]
+    print(f"Running: {' '.join(cmd)}")
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    print("STDOUT:")
+    print(result.stdout)
+    if result.stderr:
+        print("STDERR:")
+        print(result.stderr)
+    if result.returncode != 0:
+        raise Exception(f"Iceberg write job failed with return code {result.returncode}")
+    print("Iceberg write job completed successfully!")
+
 # Task 1: Print environment info
 print_info = PythonOperator(
     task_id="print_spark_info",
@@ -68,5 +87,12 @@ submit_spark_job = PythonOperator(
     dag=dag,
 )
 
+# Task 3: Write Iceberg table to MinIO
+write_iceberg_task = PythonOperator(
+    task_id="write_iceberg_to_minio",
+    python_callable=write_iceberg_to_minio,
+    dag=dag,
+)
+
 # Task dependency
-print_info >> submit_spark_job
+print_info >> submit_spark_job >> write_iceberg_task
