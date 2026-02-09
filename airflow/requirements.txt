@@ -6,3 +6,8 @@ pyspark==3.4.1
 # Utilities
 python-dotenv
 boto3
+great_expectations 
+pandas
+kafka-python
+pytest
+pyiceberg

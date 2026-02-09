@@ -94,6 +94,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/spark_jobs:/opt/spark_jobs
+    - ${AIRFLOW_PROJ_DIR:-.}/great_expectation:/opt/airflow/great_expectations
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -267,7 +268,7 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
     command: server /data --console-address ":9001"
     volumes:
-      - /minio_data:/data
+      - ./minio_data:/data
 
   createbuckets:
     image: minio/mc
@@ -283,7 +284,7 @@ services:
       "
   spark-master:
     build:
-      context: ./spark
+      context: .
       dockerfile: spark.Dockerfile
     container_name: spark-master
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
@@ -295,10 +296,11 @@ services:
     volumes:
       - ./dags:/opt/spark/work-dir
       - ./spark_jobs:/opt/spark_jobs
+      - ./great_expectation:/opt/spark_jobs/great_expectations
 
   spark-worker:
     build:
-      context: ./spark
+      context: .
       dockerfile: spark.Dockerfile
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     depends_on:
@@ -309,6 +311,7 @@ services:
     volumes:
       - ./dags:/opt/spark/work-dir
       - ./spark_jobs:/opt/spark_jobs
+      - ./great_expectation:/opt/spark_jobs/great_expectations
 
   kafka:
     image: apache/kafka:3.8.0

@@ -19,6 +19,8 @@ def produce_to_kafka():
     """Produce sample events to Kafka"""
     try:
         from kafka import KafkaProducer
+        from kafka.admin import KafkaAdminClient, NewTopic
+        from kafka.errors import TopicAlreadyExistsError
     except ImportError:
         raise ImportError("kafka-python not installed. Install with: pip install kafka-python")
     
@@ -27,6 +29,17 @@ def produce_to_kafka():
     topic = "iceberg_events"
     
     print(f"Connecting to Kafka at {bootstrap_servers}")
+
+    admin = KafkaAdminClient(bootstrap_servers=bootstrap_servers)
+    try:
+        admin.create_topics(
+            new_topics=[NewTopic(name=topic, num_partitions=1, replication_factor=1)],
+            validate_only=False,
+        )
+    except TopicAlreadyExistsError:
+        pass
+    finally:
+        admin.close()
     
     # Create producer
     producer = KafkaProducer(

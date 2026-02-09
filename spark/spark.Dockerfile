@@ -26,7 +26,7 @@ ADD https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/3.
 ADD https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.11.1/commons-pool2-2.11.1.jar ${SPARK_HOME}/jars/
 
 # 3. Install Python dependencies
-COPY requirements.txt /tmp/spark_requirements.txt
+COPY spark/requirements.txt /tmp/spark_requirements.txt
 RUN pip install --no-cache-dir -r /tmp/spark_requirements.txt
 
 # Return to spark user for security
