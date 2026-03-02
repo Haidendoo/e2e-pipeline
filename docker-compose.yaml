@@ -87,6 +87,8 @@ x-airflow-common:
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     # The following line can be used to set a custom config file, stored in the local config folder
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
+    # Add /opt/airflow to PYTHONPATH so imports work correctly
+    PYTHONPATH: '/opt/airflow'
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/utils:/opt/airflow/utils
@@ -285,7 +287,7 @@ services:
   spark-master:
     build:
       context: .
-      dockerfile: spark.Dockerfile
+      dockerfile: spark/spark.Dockerfile
     container_name: spark-master
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
     ports:
@@ -301,7 +303,7 @@ services:
   spark-worker:
     build:
       context: .
-      dockerfile: spark.Dockerfile
+      dockerfile: spark/spark.Dockerfile
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     depends_on:
       - spark-master
