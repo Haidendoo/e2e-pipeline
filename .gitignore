@@ -41,14 +41,15 @@ docs/_build/
 
 # Jupyter Notebook
 .ipynb_checkpoints
-
+data/
 # Logs and databases
 *.log
 .sqlite
 .sqlite-journal
 config/airflow.cfg
 minio_data
-
+setup_airflow_connections.sh
+airflow_connections.yaml
 logs
 
 
