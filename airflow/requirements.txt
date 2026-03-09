@@ -3,6 +3,7 @@ apache-airflow-providers-apache-spark
 apache-airflow-providers-amazon
 apache-airflow-providers-http
 apache-airflow-providers-sftp
+airflow-provider-great-expectations
 pyspark==3.4.1
 
 # Utilities
