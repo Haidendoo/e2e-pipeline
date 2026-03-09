@@ -1,0 +1,6 @@
+order_id,status,amount
+1,nah,100.50
+2,shipped,250.00
+3,delivered,75.25
+4,pending,320.00
+5,shipped,180.75

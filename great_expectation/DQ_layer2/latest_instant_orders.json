@@ -1,0 +1,18 @@
+{
+    "data_product_name": "orders_report",
+    "data_source_name": "ecommerce_system",
+    "data_asset_name": "orders",
+    "validation_definition_name": "suite_orders_basic",
+    "checkpoint_name": "checkpoint_orders",
+    "table_rules": [
+        { "rule_name": "check_table_row_count_not_zero", "add_info": { "min_value": 1 } }
+    ],
+    "columns": [
+        {
+            "column_name": "status",
+            "dq_rule(s)": [
+                { "rule_name": "check_if_values_in_list", "add_info": { "value_set": ["pending", "shipped", "delivered"] } }
+            ]
+        }
+    ]
+}

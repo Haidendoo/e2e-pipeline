@@ -1,0 +1,16 @@
+{
+    "data_product_name": "users_report",
+    "data_source_name": "crm_system",
+    "data_asset_name": "users",
+    "validation_definition_name": "suite_users_basic",
+    "checkpoint_name": "checkpoint_users",
+    "table_rules": [
+        { "rule_name": "check_table_row_count_not_zero", "add_info": { "min_value": 1 } }
+    ],
+    "columns": [
+        {
+            "column_name": "user_id",
+            "dq_rule(s)": [ { "rule_name": "check_if_not_null", "add_info": {} } ]
+        }
+    ]
+}

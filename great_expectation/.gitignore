@@ -1,0 +1,17 @@
+
+# GX uncommitted folder (validation results, data docs, etc.)
+uncommitted/
+
+# Runtime generated files (DAG tự tạo khi chạy)
+checkpoints/*.json
+expectations/*.json
+validation_definitions/*.json
+expectations/.ge_store_backend_id
+
+# Plugins (custom data docs) - optional
+plugins/
+
+# Keep directory structure
+!checkpoints/.gitkeep
+!expectations/.gitkeep
+!validation_definitions/.gitkeep
