@@ -1,0 +1,107 @@
+services:
+  # 1. Zookeeper (Cần thiết cho Kafka hoạt động)
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - data-net
+
+  # 2. Kafka Broker
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      # Cho phép cả các container bên trong (kafka:29092) LẪN máy ngoài (localhost:9092) gọi được vào Kafka
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    networks:
+      - data-net
+
+  # 2. Ngắm nhìn Kafka qua hàng giao diện (Kafka UI)
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8085:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    depends_on:
+      - kafka
+      - zookeeper
+    networks:
+      - data-net
+
+  # 3. MinIO (Giả lập S3 Storage lưu Iceberg)
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    networks:
+      - data-net
+
+  # Khởi tạo tự động bucket datalake trong MinIO
+  createbuckets:
+    image: minio/mc
+    container_name: minio-setup
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc mb myminio/datalake || true;
+      exit 0;
+      "
+    networks:
+      - data-net
+
+  # 4. Producer (Giả lập dữ liệu EdgeX push lên Kafka)
+  producer:
+    build: .
+    container_name: edgex-producer
+    command: python producer.py
+    depends_on:
+      - kafka
+    # Set to connect to kafka via internal network instead of localhost
+    networks:
+      - data-net
+    restart: unless-stopped
+
+  # 5. Spark Consumer (Đọc Kafka ghi S3 MinIO)
+  spark-consumer:
+    build: .
+    container_name: spark-consumer
+    command: python spark_consumer.py
+    depends_on:
+      - kafka
+      - minio
+      - producer
+    ports:
+      - "4040:4040"
+    networks:
+      - data-net
+    restart: unless-stopped
+
+networks:
+  data-net:
+    driver: bridge

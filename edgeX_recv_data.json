@@ -1,0 +1,151 @@
+{
+    "apiVersion": "v3",
+    "id": "4711bf07-6ac2-4653-8079-768513e35860",
+    "deviceName": "Telegraf-Node-01",
+    "profileName": "Telegraf-Full-Node-Profile",
+    "sourceName": "gpu_proc_data",
+    "origin": 1773206194041500700,
+    "readings": [
+        {
+            "origin": 1773206194041457200,
+            "deviceName": "Telegraf-Node-01",
+            "resourceName": "gpu_proc_data",
+            "profileName": "Telegraf-Full-Node-Profile",
+            "valueType": "String",
+            "value": "{\"gpu_proc_data\": \"host:b9f7f6e9a0c2, gpu_idx:0, mem_util:-, pid:6655, sm_util:-\\nhost:b9f7f6e9a0c2, gpu_idx:0, mem_util:-, pid:6655, sm_util:-\\nhost:b9f7f6e9a0c2, gpu_idx:0, mem_util:-, pid:6655, sm_util:-\\nhost:b9f7f6e9a0c2, gpu_idx:0, mem_util:-, pid:6655, sm_util:-\\nhost:b9f7f6e9a0c2, gpu_idx:0, mem_util:-, pid:6655, sm_util:-\\nhost:b9f7f6e9a0c2, gpu_idx:0, mem_util:-, pid:6655, sm_util:-\"}"
+        }
+    ]
+}
+
+{
+    "apiVersion": "v3",
+    "id": "a5c4428e-0c1d-4e60-aa5d-dfca33647e51",
+    "deviceName": "Telegraf-Node-01",
+    "profileName": "Telegraf-Full-Node-Profile",
+    "sourceName": "gpu_data",
+    "origin": 1773206194042150400,
+    "readings": [
+        {
+            "origin": 1773206194042104300,
+            "deviceName": "Telegraf-Node-01",
+            "resourceName": "gpu_data",
+            "profileName": "Telegraf-Full-Node-Profile",
+            "valueType": "String",
+            "value": "{\"gpu_data\": \"compute_mode:Default, host:b9f7f6e9a0c2, index:0, name:NVIDIA GeForce RTX 2080, pstate:P8, uuid:GPU-4592cda8-d1e8-0fd1-e09f-7031a670fd57, fan_speed:0, memory_free:7306, memory_reserved:405, memory_total:8192, memory_used:482, temperature_gpu:45, utilization_gpu:2, utilization_memory:3\\ncompute_mode:Default, host:b9f7f6e9a0c2, index:0, name:NVIDIA GeForce RTX 2080, pstate:P8, uuid:GPU-4592cda8-d1e8-0fd1-e09f-7031a670fd57, fan_speed:0, memory_free:7294, memory_reserved:405, memory_total:8192, memory_used:494, temperature_gpu:45, utilization_gpu:1, utilization_memory:2\\ncompute_mode:Default, host:b9f7f6e9a0c2, index:0, name:NVIDIA GeForce RTX 2080, pstate:P8, uuid:GPU-4592cda8-d1e8-0fd1-e09f-7031a670fd57, fan_speed:0, memory_free:7306, memory_reserved:405, memory_total:8192, memory_used:482, temperature_gpu:45, utilization_gpu:25, utilization_memory:11\\ncompute_mode:Default, host:b9f7f6e9a0c2, index:0, name:NVIDIA GeForce RTX 2080, pstate:P8, uuid:GPU-4592cda8-d1e8-0fd1-e09f-7031a670fd57, fan_speed:0, memory_free:7322, memory_reserved:405, memory_total:8192, memory_used:466, temperature_gpu:45, utilization_gpu:2, utilization_memory:3\\ncompute_mode:Default, host:b9f7f6e9a0c2, index:0, name:NVIDIA GeForce RTX 2080, pstate:P8, uuid:GPU-4592cda8-d1e8-0fd1-e09f-7031a670fd57, fan_speed:0, memory_free:7318, memory_reserved:405, memory_total:8192, memory_used:470, temperature_gpu:45, utilization_gpu:0, utilization_memory:2\\ncompute_mode:Default, host:b9f7f6e9a0c2, index:0, name:NVIDIA GeForce RTX 2080, pstate:P8, uuid:GPU-4592cda8-d1e8-0fd1-e09f-7031a670fd57, fan_speed:0, memory_free:7314, memory_reserved:405, memory_total:8192, memory_used:474, temperature_gpu:45, utilization_gpu:0, utilization_memory:2\"}"
+        }
+    ]
+}
+
+{
+    "apiVersion": "v3",
+    "id": "04c91cbb-a50f-4f6a-8836-fc440db29a70",
+    "deviceName": "Telegraf-Node-01",
+    "profileName": "Telegraf-Full-Node-Profile",
+    "sourceName": "cpu_data",
+    "origin": 1773206194042679800,
+    "readings": [
+        {
+            "origin": 1773206194042630700,
+            "deviceName": "Telegraf-Node-01",
+            "resourceName": "cpu_data",
+            "profileName": "Telegraf-Full-Node-Profile",
+            "valueType": "String",
+            "value": "{\"cpu_data\": \"cpu:cpu-total, host:b9f7f6e9a0c2, usage_idle:84.10547067521732, usage_iowait:0.1478560867422368, usage_system:2.6614095613605424, usage_user:13.085263676686205\\ncpu:cpu-total, host:b9f7f6e9a0c2, usage_idle:89.13793103447377, usage_iowait:0.073891625615769, usage_system:2.4630541871922067, usage_user:8.275862068967248\\ncpu:cpu-total, host:b9f7f6e9a0c2, usage_idle:83.67296832801146, usage_iowait:0.0982077093051532, usage_system:2.7252639332182977, usage_user:13.454456174807593\\ncpu:cpu-total, host:b9f7f6e9a0c2, usage_idle:90.33840117704159, usage_iowait:0.07356547327121626, usage_system:1.6429622363906127, usage_user:7.945071113292751\\ncpu:cpu-total, host:b9f7f6e9a0c2, usage_idle:85.400197628469, usage_iowait:0.12351778656124804, usage_system:2.272727272727273, usage_user:12.080039525689307\\ncpu:cpu-total, host:b9f7f6e9a0c2, usage_idle:92.12106053026069, usage_iowait:0.050025012506283814, usage_system:1.625812906453051, usage_user:6.178089044523528\"}"
+        }
+    ]
+}
+
+{
+    "apiVersion": "v3",
+    "id": "bb1c28d6-01be-4b12-bde8-d388f7b8d70c",
+    "deviceName": "Telegraf-Node-01",
+    "profileName": "Telegraf-Full-Node-Profile",
+    "sourceName": "mem_data",
+    "origin": 1773206194043200800,
+    "readings": [
+        {
+            "origin": 1773206194043159000,
+            "deviceName": "Telegraf-Node-01",
+            "resourceName": "mem_data",
+            "profileName": "Telegraf-Full-Node-Profile",
+            "valueType": "String",
+            "value": "{\"mem_data\": \"host:b9f7f6e9a0c2, available:26851680256, mem_total:33420632064, used:6012866560\\nhost:b9f7f6e9a0c2, available:26975744000, mem_total:33420632064, used:5888802816\\nhost:b9f7f6e9a0c2, available:26845167616, mem_total:33420632064, used:6019375104\\nhost:b9f7f6e9a0c2, available:26991083520, mem_total:33420632064, used:5873463296\\nhost:b9f7f6e9a0c2, available:26852487168, mem_total:33420632064, used:6012051456\"}"
+        }
+    ]
+}
+
+{
+    "apiVersion": "v3",
+    "id": "4056ee6a-f268-4441-b4b2-4610ca04b41d",
+    "deviceName": "Telegraf-Node-01",
+    "profileName": "Telegraf-Full-Node-Profile",
+    "sourceName": "net_data",
+    "origin": 1773206194043700500,
+    "readings": [
+        {
+            "origin": 1773206194043672600,
+            "deviceName": "Telegraf-Node-01",
+            "resourceName": "net_data",
+            "profileName": "Telegraf-Full-Node-Profile",
+            "valueType": "String",
+            "value": "{\"net_data\": \"host:b9f7f6e9a0c2, comm:core-command, dport:1883, laddr:172.19.0.4, lport:41248, pid:2673, raddr:172.19.0.9, rx_kb:0, tx_kb:0\\nhost:b9f7f6e9a0c2, comm:mosquitto, dport:41248, laddr:172.19.0.9, lport:1883, pid:2695, raddr:172.19.0.4, rx_kb:0, tx_kb:0\\nhost:b9f7f6e9a0c2, comm:mosquitto, dport:47682, laddr:172.19.0.9, lport:1883, pid:2695, raddr:172.19.0.7, rx_kb:0, tx_kb:0\"}"
+        }
+    ]
+}
+
+{
+    "apiVersion": "v3",
+    "id": "761230be-9626-4413-8c73-1e64b42257f0",
+    "deviceName": "Telegraf-Node-01",
+    "profileName": "Telegraf-Full-Node-Profile",
+    "sourceName": "sys_data",
+    "origin": 1773206404065125000,
+    "readings": [
+        {
+            "origin": 1773206404065111800,
+            "deviceName": "Telegraf-Node-01",
+            "resourceName": "sys_data",
+            "profileName": "Telegraf-Full-Node-Profile",
+            "valueType": "String",
+            "value": "{\"sys_data\": \"host:b9f7f6e9a0c2, load1:0.9, load15:1.77, load5:1.53, n_cpus:8, uptime:8245\\nhost:b9f7f6e9a0c2, load1:0.91, load15:1.77, load5:1.52, n_cpus:8, uptime:8250\\nhost:b9f7f6e9a0c2, load1:0.91, load15:1.76, load5:1.51, n_cpus:8, uptime:8255\\nhost:b9f7f6e9a0c2, load1:0.84, load15:1.75, load5:1.49, n_cpus:8, uptime:8260\\nhost:b9f7f6e9a0c2, load1:0.77, load15:1.74, load5:1.46, n_cpus:8, uptime:8265\"}"
+        }
+    ]
+}
+
+{
+    "apiVersion": "v3",
+    "id": "5c91cd20-8843-4ba5-afbb-cab9c0d514a4",
+    "deviceName": "Telegraf-Node-01",
+    "profileName": "Telegraf-Full-Node-Profile",
+    "sourceName": "disk_data",
+    "origin": 1773206404065640200,
+    "readings": [
+        {
+            "origin": 1773206404065623600,
+            "deviceName": "Telegraf-Node-01",
+            "resourceName": "disk_data",
+            "profileName": "Telegraf-Full-Node-Profile",
+            "valueType": "String",
+            "value": "{\"disk_data\": \"host:b9f7f6e9a0c2, name:nvme0n1, wwid:eui.002538aa01d1ad43, io_time:76620, iops_in_progress:0, read_bytes:2736790528, reads:42090, write_bytes:1557271552, writes:210413\\nhost:b9f7f6e9a0c2, name:nvme0n1, wwid:eui.002538aa01d1ad43, io_time:76648, iops_in_progress:0, read_bytes:2736790528, reads:42090, write_bytes:1557922816, writes:210551\\nhost:b9f7f6e9a0c2, name:nvme0n1, wwid:eui.002538aa01d1ad43, io_time:76692, iops_in_progress:0, read_bytes:2736790528, reads:42090, write_bytes:1558529024, writes:210675\\nhost:b9f7f6e9a0c2, name:nvme0n1, wwid:eui.002538aa01d1ad43, io_time:76728, iops_in_progress:0, read_bytes:2736790528, reads:42090, write_bytes:1559122944, writes:210805\\nhost:b9f7f6e9a0c2, name:nvme0n1, wwid:eui.002538aa01d1ad43, io_time:76780, iops_in_progress:0, read_bytes:2736790528, reads:42090, write_bytes:1559675904, writes:210925\"}"
+        }
+    ]
+}
+
+{
+    "apiVersion": "v3",
+    "id": "354bc3b2-e6aa-49d5-812e-166b09160c94",
+    "deviceName": "Telegraf-Node-01",
+    "profileName": "Telegraf-Full-Node-Profile",
+    "sourceName": "proc_data",
+    "origin": 1773206614088929000,
+    "readings": [
+        {
+            "origin": 1773206614088859100,
+            "deviceName": "Telegraf-Node-01",
+            "resourceName": "proc_data",
+            "profileName": "Telegraf-Full-Node-Profile",
+            "valueType": "String",
+            "value": "{\"proc_data\": \"host:b9f7f6e9a0c2, blocked:0, idle:75, proc_total:365, running:1, sleeping:289, stopped:0, total_threads:1827, zombies:0\\nhost:b9f7f6e9a0c2, blocked:1, idle:75, proc_total:369, running:1, sleeping:292, stopped:0, total_threads:1831, zombies:0\\nhost:b9f7f6e9a0c2, blocked:0, idle:75, proc_total:368, running:1, sleeping:292, stopped:0, total_threads:1828, zombies:0\\nhost:b9f7f6e9a0c2, blocked:0, idle:75, proc_total:369, running:0, sleeping:294, stopped:0, total_threads:1827, zombies:0\\nhost:b9f7f6e9a0c2, blocked:1, idle:75, proc_total:368, running:1, sleeping:291, stopped:0, total_threads:1827, zombies:0\\nhost:b9f7f6e9a0c2, blocked:1, idle:75, proc_total:367, running:1, sleeping:290, stopped:0, total_threads:1833, zombies:0\"}"
+        }
+    ]
+}
