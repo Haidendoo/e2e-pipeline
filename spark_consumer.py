@@ -75,7 +75,17 @@ flattened_df = parsed_df.withColumn("reading", explode(col("readings"))) \
         col("reading.value").alias("reading_value")
     )
 
-# 3. Ghi dữ liệu trực tiếp dưới định dạng Iceberg ra MinIO Storage
+# 3. Khởi tạo Database và Bảng Iceberg trước khi Stream nếu chưa có
+spark.sql("CREATE DATABASE IF NOT EXISTS local.db")
+try:
+    if not spark.catalog.tableExists("local.db.edgex_telegraf"):
+        print("Đang khởi tạo bảng Iceberg: local.db.edgex_telegraf...")
+        empty_df = spark.createDataFrame([], flattened_df.schema)
+        empty_df.writeTo("local.db.edgex_telegraf").using("iceberg").create()
+except Exception as e:
+    print("Thông báo khi khởi tạo bảng: ", e)
+
+# 4. Ghi dữ liệu trực tiếp dưới định dạng Iceberg ra MinIO Storage
 query = flattened_df.writeStream \
     .format("iceberg") \
     .outputMode("append") \
