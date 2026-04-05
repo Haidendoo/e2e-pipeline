@@ -23,7 +23,7 @@ spark = SparkSession.builder \
     .config("spark.hadoop.fs.s3a.path.style.access", "true") \
     .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
     .config("spark.hadoop.fs.s3a.aws.credentials.provider", "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider") \
-    .config("spark.ui.host", "0.0    docker-compose up -d.0.0") \
+    .config("spark.ui.host", "0.0.0.0") \
     .getOrCreate()
 
 # Schema chuẩn theo định dạng EdgeX (Telegraf-Node)

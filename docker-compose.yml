@@ -65,11 +65,17 @@ services:
     image: minio/mc
     container_name: minio-setup
     depends_on:
-      - minio
+      minio:
+        condition: service_started
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
+      set -e;
+      until /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin; do
+        echo 'Waiting for MinIO to become reachable...';
+        sleep 2;
+      done;
       /usr/bin/mc mb myminio/datalake || true;
+      /usr/bin/mc ls myminio/datalake;
       exit 0;
       "
     networks:
@@ -93,9 +99,12 @@ services:
     container_name: spark-consumer
     command: python spark_consumer.py
     depends_on:
-      - kafka
-      - minio
-      - producer
+      kafka:
+        condition: service_started
+      createbuckets:
+        condition: service_completed_successfully
+      producer:
+        condition: service_started
     ports:
       - "4040:4040"
     networks:
