@@ -1,13 +1,78 @@
 services:
-  mongodb_container:
-    image: mongo:latest
+  influxdb:
+    image: influxdb:2.7
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: adminpassword
+      DOCKER_INFLUXDB_INIT_ORG: iceberg
+      DOCKER_INFLUXDB_INIT_BUCKET: kafka_events
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: iceberg-token
     ports:
-      - 27018:27017
+      - 8086:8086
     volumes:
-      - mongodb_data_container:/data/db
+      - influxdb-storage:/var/lib/influxdb2
+
+  minio:
+    image: minio/minio
+    container_name: my_minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - ./minio_data:/data
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc mb myminio/raw-data || true;
+      /usr/bin/mc mb myminio/delta-lake || true;
+      /usr/bin/mc mb myminio/processed-data || true;
+      exit 0;
+      "
+
+  bytewax:
+    build:
+      context: .
+      dockerfile: bytewax/Dockerfile
+    container_name: bytewax
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS:-kafka:9092}
+      KAFKA_TOPICS: edge_computer_stats
+      INFLUX_URL: http://influxdb:8086
+      INFLUX_TOKEN: iceberg-token
+      INFLUX_ORG: iceberg
+      INFLUX_BUCKET: kafka_events
+      GRAFANA_URL: http://grafana:3000
+      GRAFANA_API_KEY: ${GRAFANA_API_KEY:-}
+    depends_on:
+      - influxdb
+      - grafana
+    restart: always
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: adminpassword
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana-provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - influxdb
+    restart: always
 
 volumes:
-  mongodb_data_container:
+  influxdb-storage:
+  grafana-storage:

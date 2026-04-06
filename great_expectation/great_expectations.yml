@@ -80,3 +80,20 @@ data_docs_sites:
       base_directory: uncommitted/data_docs/local_site/
     site_index_builder:
       class_name: DefaultSiteIndexBuilder
+fluent_datasources:
+  my_datasource:
+    type: pandas_filesystem
+    id: d433c03e-5d36-4805-b399-6fadfc4c05dc
+    assets:
+      orders:
+        type: csv
+        id: f7d906e9-31e3-44c6-864d-25d50e7fbe6f
+        batch_definitions:
+          full_table:
+            id: 095d34be-53c3-4613-9fb1-9cac39286963
+            partitioner:
+        connect_options:
+          glob_directive: orders.csv
+    base_directory: /opt/airflow/great_expectations/test_data
+analytics_enabled:
+data_context_id: c9581fbb-4a48-4d62-9ad1-293964c1bb59
