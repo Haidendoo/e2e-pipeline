@@ -7,7 +7,7 @@ from datetime import datetime
 import pendulum
 import pyarrow as pa
 from airflow import DAG
-from airflow.decorators import task
+from airflow.sdk import task
 from pyiceberg.catalog import load_catalog
 from pyiceberg.schema import Schema
 from pyiceberg.types import IntegerType, NestedField, StringType, TimestampType

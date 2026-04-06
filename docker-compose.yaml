@@ -259,36 +259,36 @@ services:
       _PIP_ADDITIONAL_REQUIREMENTS: ''
     user: "0:0"
 
-  # spark-master:
-  #   build:
-  #     context: .
-  #     dockerfile: spark/spark.Dockerfile
-  #   container_name: spark-master
-  #   command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
-  #   ports:
-  #     - "9090:8080" # Web UI
-  #     - "7077:7077" # Communication
-  #   environment:
-  #     - SPARK_MASTER_HOST=spark-master
-  #   volumes:
-  #     - ./dags:/opt/spark/work-dir
-  #     - ./spark_jobs:/opt/spark_jobs
-  #     - ./great_expectation:/opt/spark_jobs/great_expectations
+  spark-master:
+    build:
+      context: .
+      dockerfile: spark/spark.Dockerfile
+    container_name: spark-master
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - "9090:8080" # Web UI
+      - "7077:7077" # Communication
+    environment:
+      - SPARK_MASTER_HOST=spark-master
+    volumes:
+      - ./dags:/opt/spark/work-dir
+      - ./spark_jobs:/opt/spark_jobs
+      - ./great_expectation:/opt/spark_jobs/great_expectations
 
-  # spark-worker:
-  #   build:
-  #     context: .
-  #     dockerfile: spark/spark.Dockerfile
-  #   command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
-  #   depends_on:
-  #     - spark-master
-  #   environment:
-  #     - SPARK_WORKER_CORES=2
-  #     - SPARK_WORKER_MEMORY=1G
-  #   volumes:
-  #     - ./dags:/opt/spark/work-dir
-  #     - ./spark_jobs:/opt/spark_jobs
-  #     - ./great_expectation:/opt/spark_jobs/great_expectations
+  spark-worker:
+    build:
+      context: .
+      dockerfile: spark/spark.Dockerfile
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=1G
+    volumes:
+      - ./dags:/opt/spark/work-dir
+      - ./spark_jobs:/opt/spark_jobs
+      - ./great_expectation:/opt/spark_jobs/great_expectations
 
   kafka:
     image: apache/kafka:3.8.0

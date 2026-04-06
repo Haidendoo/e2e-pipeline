@@ -18,5 +18,6 @@ great_expectations
 pandas
 kafka-python
 pytest
-pyiceberg
+pyiceberg[s3fs,sql-sqlite]
+sqlalchemy>=2.0.18,<3
 Faker
