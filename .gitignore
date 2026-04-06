@@ -51,5 +51,5 @@ minio_data
 setup_airflow_connections.sh
 airflow_connections.yaml
 logs
-
-
+output/
+iceberg_catalog.db
