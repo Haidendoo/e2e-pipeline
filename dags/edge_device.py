@@ -5,6 +5,7 @@ import os
 import pendulum
 from airflow import DAG
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
+from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from airflow.sdk.bases.hook import BaseHook
 
 
@@ -56,13 +57,21 @@ with DAG(
 			"com.amazonaws:aws-java-sdk-bundle:1.12.262",
 			"org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.1",
 			"org.apache.commons:commons-pool2:2.11.1",
+			"org.postgresql:postgresql:42.6.0",
 		]
 	)
 	common_conf = {
 		"spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
 		"spark.sql.catalog.local": "org.apache.iceberg.spark.SparkCatalog",
-		"spark.sql.catalog.local.type": "hadoop",
+		"spark.sql.catalog.local.catalog-impl": "org.apache.iceberg.jdbc.JdbcCatalog",
+		"spark.sql.catalog.local.uri": "jdbc:postgresql://postgres:5432/airflow",
+		"spark.sql.catalog.local.jdbc.user": "airflow",
+		"spark.sql.catalog.local.jdbc.password": "airflow",
 		"spark.sql.catalog.local.warehouse": f"s3a://{minio_config['bucket']}/warehouse",
+		"spark.sql.catalog.local.io-impl": "org.apache.iceberg.hadoop.HadoopFileIO",
+		"spark.sql.catalog.local.s3.endpoint": minio_config["endpoint"],
+		"spark.sql.catalog.local.s3.access-key-id": minio_config["access_key"],
+		"spark.sql.catalog.local.s3.secret-access-key": minio_config["secret_key"],
 		"spark.hadoop.fs.s3a.endpoint": minio_config["endpoint"],
 		"spark.hadoop.fs.s3a.access.key": minio_config["access_key"],
 		"spark.hadoop.fs.s3a.secret.key": minio_config["secret_key"],
@@ -104,4 +113,11 @@ with DAG(
 		env_vars=common_env,
 	)
 
-	bronze_task >> silver_task >> gold_task
+	trino_validate_gold = SQLExecuteQueryOperator(
+		task_id="trino_validate_gold",
+		conn_id="trino_default",
+		sql="SELECT COUNT(*) FROM iceberg.edge_device.edge_device_gold;",
+		show_return_value_in_logs=True,
+	)
+
+	bronze_task >> silver_task >> gold_task >> trino_validate_gold

@@ -119,6 +119,7 @@ Spark Batch Job (iceberg_write_job.py)
 | Kafka Broker | 9092 | `localhost:9092` (internal) / `localhost:9094` (host) |
 | Kafka UI | 8088 | `http://localhost:8088` |
 | Spark Master | 9090 | `http://localhost:9090` |
+| Trino Engine | 8080 | `jdbc:trino://localhost:8080` |
 
 ### Start All Services
 

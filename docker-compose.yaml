@@ -323,6 +323,17 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local-kafka
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
+  trino:
+    image: trinodb/trino:435
+    container_name: trino
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./trino_config/catalog:/etc/trino/catalog
+    depends_on:
+      - postgres
+
 volumes:
   postgres-db-volume:
   kafka-data:

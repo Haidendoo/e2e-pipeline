@@ -4,7 +4,7 @@
 # This script adds all connections to Airflow using the CLI
 
 # Container name - adjust if your container has a different name
-CONTAINER_NAME="iceberg-airflow-scheduler-1"  # Change this to match your actual container name
+CONTAINER_NAME="e2e-pipeline-airflow-scheduler-1"  # Change this to match your actual container name
 
 echo "Setting up Airflow connections..."
 echo "Using container: $CONTAINER_NAME"
@@ -79,6 +79,14 @@ echo "Adding http_default connection..."
 docker exec $CONTAINER_NAME airflow connections add 'http_default' \
   --conn-type 'http' \
   --conn-host 'http://localhost'
+
+# Trino Connection
+echo "Adding trino_default connection..."
+docker exec $CONTAINER_NAME airflow connections add 'trino_default' \
+  --conn-type 'trino' \
+  --conn-host 'trino' \
+  --conn-port '8080' \
+  --conn-login 'airflow'
 
 echo ""
 echo "All connections have been added!"

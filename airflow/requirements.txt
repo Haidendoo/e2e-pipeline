@@ -21,3 +21,6 @@ pytest
 pyiceberg[s3fs,sql-sqlite]
 sqlalchemy>=2.0.18,<3
 Faker
+# Trino
+apache-airflow-providers-trino
+trino

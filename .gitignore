@@ -53,3 +53,9 @@ airflow_connections.yaml
 logs
 output/
 iceberg_catalog.db
+
+# Temporary Scripts
+set_vars.sh
+
+# Spark Checkpoints
+spark_jobs/checkpoints/

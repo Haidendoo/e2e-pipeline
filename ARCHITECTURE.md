@@ -148,7 +148,7 @@ Iceberg table: local.edge_device.edge_device_gold
         ↓
 Great Expectations checkpoint (Gold quality gate)
         ↓
-Spark SQL engine over Iceberg catalog
+Trino query engine over JDBC Iceberg catalog
         ↓
 Metabase dashboards and ad-hoc analytics
 ```
@@ -163,7 +163,7 @@ The target Airflow orchestration for this flow is:
 - `ge_validate_silver`
 - `edge_device_gold`
 - `ge_validate_gold`
-- `serve_gold_via_spark_sql`
+- `trino_validate_gold`
 
 The first three tasks are Spark transformation jobs. The `ge_validate_*` tasks run Great Expectations checkpoints as quality gates between layers. The final serving task publishes Gold data through Spark SQL so Metabase can query the curated Iceberg tables.
 
@@ -191,10 +191,10 @@ These checkpoints are designed to fail fast in Airflow, preventing downstream pr
 
 ## SQL Serving for BI
 
-After Gold is materialized and validated, Spark SQL is used as the serving engine on top of the Iceberg catalog.
+After Gold is materialized and validated, Trino is used as the serving engine on top of the Iceberg catalog.
 
-- Spark SQL exposes the curated Gold tables as queryable datasets.
-- Metabase connects to the Spark SQL endpoint for dashboards and exploration.
+- Trino exposes the curated Gold tables as queryable datasets.
+- Metabase connects to the Trino endpoint (port 8080) for dashboards and exploration.
 - This keeps BI reads on curated, quality-checked Gold data instead of raw layers.
 
 ## Spark Job Behavior
@@ -290,10 +290,11 @@ Expected exported files:
 
 ### Iceberg Catalog
 
-The active edge-device pipeline uses Spark’s `local` Hadoop catalog.
+The active edge-device pipeline uses JDBC catalog (PostgreSQL).
 
 - Catalog name: `local`
-- Catalog type: `hadoop`
+- Catalog type: `jdbc`
+- Database: `postgres` (`airflow` database)
 - Warehouse path pattern: `s3a://<bucket>/warehouse`
 
 Tables used by the edge-device flow:
