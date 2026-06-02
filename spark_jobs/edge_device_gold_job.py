@@ -26,12 +26,14 @@ def main() -> None:
 
     gold_base_df = (
         pending_silver.filter(F.col("metric_value_num").isNotNull())
+        .withColumn("device_name_nn", F.coalesce(F.col("device_name"), F.lit("unknown")))
+        .withColumn("profile_name_nn", F.coalesce(F.col("profile_name"), F.lit("unknown")))
         .withColumn("source_name_nn", F.coalesce(F.col("source_name"), F.lit("unknown")))
         .withColumn("window_start_nn", F.coalesce(half_hour_window("event_time"), F.current_timestamp()))
     )
 
     gold_df = (
-        gold_base_df.groupBy("window_start_nn", "source_name_nn", "metric_key", "batch_id")
+        gold_base_df.groupBy("window_start_nn", "device_name_nn", "profile_name_nn", "source_name_nn", "metric_key", "batch_id")
         .agg(
             F.count(F.lit(1)).alias("sample_count"),
             F.coalesce(F.avg("metric_value_num"), F.lit(0.0)).alias("avg_value"),
@@ -40,6 +42,8 @@ def main() -> None:
         )
         .select(
             F.col("window_start_nn").alias("window_start"),
+            F.col("device_name_nn").alias("device_name"),
+            F.col("profile_name_nn").alias("profile_name"),
             F.col("source_name_nn").alias("source_name"),
             F.col("metric_key"),
             F.col("sample_count"),

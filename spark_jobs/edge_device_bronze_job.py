@@ -89,7 +89,7 @@ def main() -> None:
 
     query = (
         stream_df.writeStream.foreachBatch(process_batch)
-        .option("checkpointLocation", f"{config['checkpoint_location']}/bronze")
+        .option("checkpointLocation", f"{config['checkpoint_location']}_v2/bronze")
         .trigger(availableNow=True)
         .start()
     )

@@ -115,6 +115,8 @@ def ensure_tables(spark: SparkSession) -> None:
         """
         CREATE TABLE IF NOT EXISTS local.edge_device.edge_device_gold (
             window_start TIMESTAMP NOT NULL,
+            device_name STRING NOT NULL,
+            profile_name STRING NOT NULL,
             source_name STRING NOT NULL,
             metric_key STRING NOT NULL,
             sample_count BIGINT NOT NULL,

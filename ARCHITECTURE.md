@@ -150,7 +150,7 @@ Great Expectations checkpoint (Gold quality gate)
         ↓
 Trino query engine over JDBC Iceberg catalog
         ↓
-Metabase dashboards and ad-hoc analytics
+Grafana dashboards (Historical/Analytical)
 ```
 
 ### Orchestration Details
@@ -194,8 +194,8 @@ These checkpoints are designed to fail fast in Airflow, preventing downstream pr
 After Gold is materialized and validated, Trino is used as the serving engine on top of the Iceberg catalog.
 
 - Trino exposes the curated Gold tables as queryable datasets.
-- Metabase connects to the Trino endpoint (port 8080) for dashboards and exploration.
-- This keeps BI reads on curated, quality-checked Gold data instead of raw layers.
+- Grafana connects to the Trino endpoint (port 8080) using the Trino datasource plugin for historical dashboards and long-term trend analysis.
+- This creates a **Single Pane of Glass** where Grafana visualizes both real-time operational data (from InfluxDB) and historical analytical data (from Trino/Iceberg).
 
 ## Spark Job Behavior
 
