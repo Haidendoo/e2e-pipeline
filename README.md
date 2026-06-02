@@ -2,6 +2,13 @@
 
 A complete data engineering stack demonstrating streaming and batch processing with Apache Airflow, Spark, Iceberg, Kafka, and MinIO.
 
+The current edge-device pipeline is a 30-minute Spark medallion flow:
+- Bronze ingests Kafka events into Iceberg.
+- Silver normalizes the nested payload into metric rows.
+- Gold aggregates numeric metrics into summary rows.
+
+The repository also includes a reader script that prints the Iceberg tables and exports CSV snapshots for quick inspection.
+
 ## 🏗 Architecture
 
 ### Two-Part Data Pipeline
@@ -183,6 +190,46 @@ docker compose exec airflow-scheduler airflow dags trigger spark_test_dag
 ✓ Reading back data from Iceberg table
 ```
 
+### 3. **Edge Device Medallion DAG**
+**File:** `dags/edge_device.py`
+
+Runs the edge-device pipeline on a 30-minute cron schedule using three separate Spark tasks:
+
+- `edge_device_bronze`
+- `edge_device_silver`
+- `edge_device_gold`
+
+**Spark Jobs:**
+
+- `spark_jobs/edge_device_bronze_job.py`
+- `spark_jobs/edge_device_silver_job.py`
+- `spark_jobs/edge_device_gold_job.py`
+
+**Reader Script:**
+
+- `test.py`
+
+**What it does:**
+
+- Reads simulated events from Kafka topic `edge_computer_stats`
+- Writes Bronze, Silver, and Gold tables to MinIO-backed Iceberg
+- Prints each table to the console
+- Exports CSV snapshots to `output/edge_device/`
+
+**Run the reader locally:**
+
+```bash
+uv run test.py
+```
+
+**Expected CSV files:**
+
+```text
+output/edge_device/edge_device_bronze.csv
+output/edge_device/edge_device_silver.csv
+output/edge_device/edge_device_gold.csv
+```
+
 ## 🔧 Configuration
 
 ### Environment Variables (`.env`)
@@ -195,6 +242,10 @@ MINIO_ENDPOINT=http://minio:9000
 MINIO_ACCESS_KEY=minioadmin
 MINIO_SECRET_KEY=minioadmin
 MINIO_BUCKET=test-bucket
+EDGE_DEVICE_KAFKA_BOOTSTRAP=kafka:9092
+EDGE_DEVICE_KAFKA_TOPIC=edge_computer_stats
+EDGE_DEVICE_ICEBERG_NAMESPACE=edge_device
+EDGE_DEVICE_CSV_OUTPUT_DIR=/tmp/edge_device_csv
 ```
 
 ### Airflow Credentials
@@ -227,6 +278,11 @@ MINIO_BUCKET=test-bucket
 - **Catalog Type:** Hadoop (file-based with SQL)
 - **Storage:** S3A compatible (MinIO)
 - **Format:** Parquet (data) + Avro (metadata)
+
+### Edge Device Medallion
+- **Catalog Type:** Spark `local` Hadoop catalog
+- **Storage:** S3A compatible (MinIO)
+- **Tables:** `edge_device_bronze`, `edge_device_silver`, `edge_device_gold`
 
 ### MinIO
 - **Version:** Latest
@@ -309,6 +365,16 @@ response = s3.list_objects_v2(Bucket='test-bucket', Prefix='warehouse/', MaxKeys
 for obj in response.get('Contents', []):
     print(obj['Key'])
 "
+
+```
+
+### 5. Print and Export Edge Device Tables
+
+```bash
+uv run test.py
+```
+
+This prints the Bronze, Silver, and Gold tables and writes CSV snapshots to `output/edge_device/`.
 ```
 
 ## 🐛 Troubleshooting
@@ -339,6 +405,10 @@ for obj in response.get('Contents', []):
 ```bash
 docker compose exec minio /usr/bin/mc mb minio/test-bucket
 ```
+
+### Reader Script Cannot Export CSV
+
+The reader writes CSV files to `/tmp/edge_device_csv` inside the Spark container and copies them back to `output/edge_device/` on the host. If export fails, check that the `spark-master` container is running and that the host `output/` folder is writable.
 
 ### Airflow DAG Not Found
 
