@@ -1,0 +1,129 @@
+mport pynvml
+import psutil
+import subprocess
+import re
+import socket
+import os
+import time
+from datetime import datetime
+
+HOSTNAME = socket.gethostname()
+OUTPUT_FILE = "/etc/telegraf/process_metrics.txt"
+
+def get_pmon_data():
+    try:
+        result = subprocess.run(
+            ["nvidia-smi", "pmon", "-c", "1", "-s", "um"],
+            capture_output=True, text=True
+        )
+        lines = result.stdout.strip().split("\n")
+        data = {}
+        for line in lines[1:]:
+            parts = re.split(r'\s+', line.strip())
+            if len(parts) < 8 or parts[1] == '-':
+                continue
+            try:
+                pid = int(parts[1])
+                sm = int(parts[3]) if parts[3].isdigit() else 0
+                mem_util = int(parts[4]) if parts[4].isdigit() else 0
+                cmd = parts[7] if len(parts) > 7 else "unknown"
+                data[pid] = {"sm": sm, "mem_util": mem_util, "cmd": cmd}
+            except ValueError:
+                continue
+        return data
+    except Exception as e:
+        print(f"Failed to get pmon data: {e}")
+        return {}
+
+def main():
+    pynvml.nvmlInit()
+    pmon_data = get_pmon_data()
+
+    device_count = pynvml.nvmlDeviceGetCount()
+    with open(OUTPUT_FILE, "w") as f:  # Overwrite file each time
+	for i in range(device_count):
+            handle = pynvml.nvmlDeviceGetHandleByIndex(i)
+            gpu_name = pynvml.nvmlDeviceGetName(handle).decode()
+            temperature = pynvml.nvmlDeviceGetTemperature(handle, pynvml.NVML_TEMPERATURE_GPU)
+            power_draw = pynvml.nvmlDeviceGetPowerUsage(handle) / 1000  # mW to W
+
+            try:
+                procs = pynvml.nvmlDeviceGetComputeRunningProcesses(handle)
+            except pynvml.NVMLError_NotSupported:
+                continue
+
+            for proc in procs:
+                pid = proc.pid
+                mem_used = proc.usedGpuMemory / 1024 ** 2  # MB
+
+                try:
+                    ps = psutil.Process(pid)
+                    cmdline_list = ps.cmdline()
+                    name = ps.name()
+                    if len(cmdline_list) > 1:
+                        script = os.path.basename(cmdline_list[1])
+                    else:
+                        script = name
+                except Exception:
+                    script = "unknown"
+
+                sm_util = pmon_data.get(pid, {}).get("sm", 0)
+                mem_util = pmon_data.get(pid, {}).get("mem_util", 0)
+
+                line = (
+                    f"gpu_process,host={HOSTNAME},gpu_id={i},gpu_name={gpu_name.replace(' ', '_')},"
+                    f"pid={pid},process_name={script} "
+                    f"gpu_memory={mem_used:.2f},sm_util={sm_util},mem_util={mem_util},"
+                    f"temperature={temperature},power_draw={power_draw}"
+                )
+                f.write(line + "\n")
+
+if __name__ == "__main__":
+    while True:
+        main()
+        time.sleep(5)
+
+
+
+
+GPU telegraf conf
+[agent]
+  interval = "5s"
+  flush_interval = "5s"
+  hostname = "VM-GPU"
+
+# Output Plugin for InfluxDB#
+[[outputs.influxdb_v2]]
+  urls = ["http://146.190.59.74:8086"]
+  token = "gvo0xfJ7jG6PtyddlD3YdBqyF-8r_Dh8LcoFpX5O07mXg1F5ixTXjhMmkdeZ55oEvg0nr3C4nbQOtCRL6NLdZw=="
+  organization = "grafana"
+  bucket = "VM-GPU"
+
+[[inputs.file]]
+  files = ["/etc/telegraf/process_metrics.txt"]
+  data_format = "influx"
+  name_override = "gpu_process"
+
+[[inputs.nvidia_smi]]
+
+[[processors.converter]]
+  [processors.converter.fields]
+    tag = ["pid"]
+
+# Read metrics about cpu usage
+[[inputs.cpu]]
+  percpu = true
+  totalcpu = true
+  collect_cpu_time = false
+  report_active = false
+  core_tags = true
+
+# Read metrics about disk IO by device
+[[inputs.diskio]]
+
+# Read metrics about memory usage
+[[inputs.mem]]
+
+[[inputs.processes]]
+
+[[inputs.system]]

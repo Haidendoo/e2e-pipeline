@@ -1,0 +1,40 @@
+sudo apt update
+sudo apt install git
+
+git config --global user.name ""
+git config --global user.email ""
+
+ssh-keygen -t rsa -b 4096 -C ""
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+
+cat ~/.ssh/id_rsa.pub
+
+ssh -T git@github.com
+
+============================== CentOS ==========================
+# Update system packages
+sudo dnf update -y    # or sudo yum update -y
+
+# Install Git
+sudo dnf install git -y    # or sudo yum install git -y
+
+# Configure Git user information
+git config --global user.name ""
+git config --global user.email ""
+
+# Generate a new SSH key with your email
+ssh-keygen -t rsa -b 4096 -C ""
+
+# Start the ssh-agent in the background
+eval "$(ssh-agent -s)"
+
+# Add your SSH private key to the ssh-agent
+ssh-add ~/.ssh/id_rsa
+
+# Display your public SSH key
+cat ~/.ssh/id_rsa.pub
+
+# Test the SSH connection to GitHub
+ssh -T git@github.com

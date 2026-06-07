@@ -1,0 +1,32 @@
+Writable:
+  LogLevel: "INFO"
+  StoreAndForward:
+    Enabled: false
+
+  Pipeline:
+    ExecutionOrder: "FilterByDeviceName,Transform,MQTTExport"
+
+    Functions:
+      FilterByDeviceName:
+        Parameters:
+          DeviceNames: "RPi4-REST-v2,RPi4-MQTT"
+          FilterOut: "false"
+      Transform:
+        Parameters:
+          Type: "json"
+      MQTTExport:
+        Parameters:
+          BrokerAddress: "tcp://edgex-mqtt-broker:1883"
+          Topic: "edgex_system_metrics_raw"
+          ClientId: "app-kafka-export-client"
+          Retain: "false"
+          AutoReconnect: "true"
+
+Service:
+  Host: "localhost"
+  Port: 59702
+  StartupMsg: "app-mqtt-export has Started"
+
+MessageBus:
+  Optional:
+    ClientId: "app-kafka-export-client"

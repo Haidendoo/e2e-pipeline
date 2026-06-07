@@ -1,0 +1,1255 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "EdgeX Foundry — System Monitoring Dashboard. Visualize CPU, Memory, Network, Disk, Temperature metrics từ thiết bị biên qua Kafka → Spark → Iceberg → Trino pipeline.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 100,
+      "title": "📊 Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "title": "CPU Usage (avg)",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUUsage' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "format": 1,
+          "refId": "A",
+          "query": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUUsage' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "queryText": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUUsage' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "sql": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUUsage' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "celsius",
+          "min": 0,
+          "max": 90
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "title": "CPU Temperature",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Temperature' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "format": 1,
+          "refId": "A",
+          "query": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Temperature' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "queryText": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Temperature' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "sql": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Temperature' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "bytes",
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "title": "Memory Used",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'MemUsed' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "format": 1,
+          "refId": "A",
+          "query": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'MemUsed' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "queryText": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'MemUsed' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "sql": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'MemUsed' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "title": "Uptime",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Uptime' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "format": 1,
+          "refId": "A",
+          "query": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Uptime' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "queryText": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Uptime' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "sql": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Uptime' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "title": "Process Count",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'ProcessCount' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "format": 1,
+          "refId": "A",
+          "query": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'ProcessCount' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "queryText": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'ProcessCount' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1",
+          "sql": "SELECT avg_value FROM iceberg.edgex.edgex_gold WHERE resource_name = 'ProcessCount' AND device_name = '${device_name}' ORDER BY window_start DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 101,
+      "title": "🖥️ CPU Metrics",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "spanNulls": true
+          },
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 6
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "title": "CPU Usage % Over Time",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start AS time, avg_value AS \"CPU Usage %\", min_value AS \"CPU Min %\", max_value AS \"CPU Max %\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUUsage' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start",
+          "format": 0,
+          "refId": "A",
+          "query": "SELECT window_start AS time, avg_value AS \"CPU Usage %\", min_value AS \"CPU Min %\", max_value AS \"CPU Max %\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUUsage' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start",
+          "queryText": "SELECT window_start AS time, avg_value AS \"CPU Usage %\", min_value AS \"CPU Min %\", max_value AS \"CPU Max %\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUUsage' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start",
+          "sql": "SELECT window_start AS time, avg_value AS \"CPU Usage %\", min_value AS \"CPU Min %\", max_value AS \"CPU Max %\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUUsage' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "spanNulls": true
+          },
+          "unit": "celsius",
+          "min": 0,
+          "max": 90,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 75
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 6
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "title": "CPU Temperature Over Time",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start AS time, avg_value AS \"Temperature °C\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Temperature' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start",
+          "format": 0,
+          "refId": "A",
+          "query": "SELECT window_start AS time, avg_value AS \"Temperature °C\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Temperature' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start",
+          "queryText": "SELECT window_start AS time, avg_value AS \"Temperature °C\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Temperature' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start",
+          "sql": "SELECT window_start AS time, avg_value AS \"Temperature °C\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'Temperature' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 1.5,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "unit": "short",
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "title": "Load Average (1 / 5 / 15 min)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('LoadAvg1', 'LoadAvg5', 'LoadAvg15') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "format": 0,
+          "refId": "A",
+          "query": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('LoadAvg1', 'LoadAvg5', 'LoadAvg15') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "queryText": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('LoadAvg1', 'LoadAvg5', 'LoadAvg15') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "sql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('LoadAvg1', 'LoadAvg5', 'LoadAvg15') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 1.5,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "unit": "MHz"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "title": "CPU Frequency (MHz)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start AS time, avg_value AS \"CPU Freq MHz\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUFreq' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start",
+          "format": 0,
+          "refId": "A",
+          "query": "SELECT window_start AS time, avg_value AS \"CPU Freq MHz\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUFreq' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start",
+          "queryText": "SELECT window_start AS time, avg_value AS \"CPU Freq MHz\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUFreq' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start",
+          "sql": "SELECT window_start AS time, avg_value AS \"CPU Freq MHz\" FROM iceberg.edgex.edgex_gold WHERE resource_name = 'CPUFreq' AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 102,
+      "title": "💾 Memory & Swap",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 25,
+            "spanNulls": true
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "title": "Memory Used / Free Over Time",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('MemUsed', 'MemFree') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "format": 0,
+          "refId": "A",
+          "query": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('MemUsed', 'MemFree') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "queryText": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('MemUsed', 'MemFree') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "sql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('MemUsed', 'MemFree') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 1.5,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 22
+      },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "title": "Swap In / Out",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('SwapIn', 'SwapOut') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "format": 0,
+          "refId": "A",
+          "query": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('SwapIn', 'SwapOut') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "queryText": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('SwapIn', 'SwapOut') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "sql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('SwapIn', 'SwapOut') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 103,
+      "title": "🌐 Network I/O",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "spanNulls": true
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 31
+      },
+      "id": 30,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "title": "Network Bytes Sent / Received",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('NetBytesSent', 'NetBytesRecv') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "format": 0,
+          "refId": "A",
+          "query": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('NetBytesSent', 'NetBytesRecv') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "queryText": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('NetBytesSent', 'NetBytesRecv') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "sql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('NetBytesSent', 'NetBytesRecv') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 1.5,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "unit": "pps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 31
+      },
+      "id": 31,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "title": "Network Packets Sent / Received",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('NetPacketsSent', 'NetPacketsRecv') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "format": 0,
+          "refId": "A",
+          "query": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('NetPacketsSent', 'NetPacketsRecv') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "queryText": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('NetPacketsSent', 'NetPacketsRecv') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "sql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('NetPacketsSent', 'NetPacketsRecv') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 39
+      },
+      "id": 104,
+      "title": "💿 Disk I/O",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "spanNulls": true
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "id": 40,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "title": "Disk Read / Write Bytes",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('DiskRead', 'DiskWrite') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "format": 0,
+          "refId": "A",
+          "query": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('DiskRead', 'DiskWrite') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "queryText": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('DiskRead', 'DiskWrite') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "sql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('DiskRead', 'DiskWrite') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 48
+      },
+      "id": 105,
+      "title": "⚙️ System Processes & Interrupts",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 1.5,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "unit": "short",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 49
+      },
+      "id": 50,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "title": "Process / Thread Count",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('ProcessCount', 'ThreadCount') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "format": 0,
+          "refId": "A",
+          "query": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('ProcessCount', 'ThreadCount') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "queryText": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('ProcessCount', 'ThreadCount') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "sql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('ProcessCount', 'ThreadCount') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 1.5,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 49
+      },
+      "id": 51,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "title": "Context Switches / Interrupts",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('ContextSwitches', 'Interrupts', 'SoftInterrupts') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "format": 0,
+          "refId": "A",
+          "query": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('ContextSwitches', 'Interrupts', 'SoftInterrupts') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "queryText": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('ContextSwitches', 'Interrupts', 'SoftInterrupts') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name",
+          "sql": "SELECT window_start AS time, avg_value AS value, resource_name AS metric FROM iceberg.edgex.edgex_gold WHERE resource_name IN ('ContextSwitches', 'Interrupts', 'SoftInterrupts') AND device_name = '${device_name}' AND window_start >= now() - interval '${time_range}' minute ORDER BY window_start, resource_name"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 56
+      },
+      "id": 106,
+      "title": "📋 Data Quality — Latest Gold Records",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "trino_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "avg_value"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "sample_count"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 57
+      },
+      "id": 60,
+      "options": {
+        "footer": {
+          "enablePagination": true
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "window_start",
+            "desc": true
+          }
+        ]
+      },
+      "title": "EdgeX Gold Table — Latest Aggregates",
+      "type": "table",
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "trino_ds"
+          },
+          "rawSql": "SELECT window_start, device_name, resource_name, sample_count, ROUND(avg_value, 4) AS avg_value, ROUND(min_value, 4) AS min_value, ROUND(max_value, 4) AS max_value, generated_at FROM iceberg.edgex.edgex_gold WHERE device_name = '${device_name}' AND window_start >= now() - interval '60' minute ORDER BY window_start DESC, resource_name LIMIT 200",
+          "format": 1,
+          "refId": "A",
+          "query": "SELECT window_start, device_name, resource_name, sample_count, ROUND(avg_value, 4) AS avg_value, ROUND(min_value, 4) AS min_value, ROUND(max_value, 4) AS max_value, generated_at FROM iceberg.edgex.edgex_gold WHERE device_name = '${device_name}' AND window_start >= now() - interval '60' minute ORDER BY window_start DESC, resource_name LIMIT 200",
+          "queryText": "SELECT window_start, device_name, resource_name, sample_count, ROUND(avg_value, 4) AS avg_value, ROUND(min_value, 4) AS min_value, ROUND(max_value, 4) AS max_value, generated_at FROM iceberg.edgex.edgex_gold WHERE device_name = '${device_name}' AND window_start >= now() - interval '60' minute ORDER BY window_start DESC, resource_name LIMIT 200",
+          "sql": "SELECT window_start, device_name, resource_name, sample_count, ROUND(avg_value, 4) AS avg_value, ROUND(min_value, 4) AS min_value, ROUND(max_value, 4) AS max_value, generated_at FROM iceberg.edgex.edgex_gold WHERE device_name = '${device_name}' AND window_start >= now() - interval '60' minute ORDER BY window_start DESC, resource_name LIMIT 200"
+        }
+      ]
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "tags": [
+    "edgex",
+    "system-monitoring",
+    "iot",
+    "kafka",
+    "iceberg"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "RPi4-REST-v2",
+          "value": "RPi4-REST-v2"
+        },
+        "datasource": {
+          "type": "trino-datasource",
+          "uid": "trino_ds"
+        },
+        "definition": "SELECT DISTINCT device_name FROM iceberg.edgex.edgex_gold ORDER BY device_name",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "device_name",
+        "options": [],
+        "query": "SELECT DISTINCT device_name FROM iceberg.edgex.edgex_gold ORDER BY device_name",
+        "refresh": 2,
+        "sort": 1,
+        "label": "Device",
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "60",
+          "value": "60"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "time_range",
+        "options": [
+          {
+            "selected": false,
+            "text": "15 min",
+            "value": "15"
+          },
+          {
+            "selected": true,
+            "text": "1 hour",
+            "value": "60"
+          },
+          {
+            "selected": false,
+            "text": "6 hours",
+            "value": "360"
+          },
+          {
+            "selected": false,
+            "text": "24 hours",
+            "value": "1440"
+          },
+          {
+            "selected": false,
+            "text": "7 days",
+            "value": "10080"
+          }
+        ],
+        "query": "15,60,360,1440,10080",
+        "label": "Time Range",
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "EdgeX System Monitoring",
+  "uid": "edgex-system-monitoring-v1",
+  "version": 1
+}

@@ -1,0 +1,50 @@
+name: "Telegraf-Full-Node-Profile"
+manufacturer: "Telegraf"
+model: "Linux-GPU-Node"
+labels:
+  - "monitoring"
+  - "system"
+  - "gpu"
+description: "Full device profile matching custom Telegraf configuration for System, Disk (NVMe only), Mem, Net, and NVIDIA GPU PMON."
+
+deviceResources:
+  - name: "cpu_data"
+    description: "CPU Metrics: usage_user, system, idle, iowait"
+    properties:
+      valueType: "String"
+      readWrite: "RW"
+  - name: "mem_data"
+    description: "Memory Metrics: used, available, total"
+    properties:
+      valueType: "String"
+      readWrite: "RW"
+  - name: "disk_data"  # <--- PHẢI LÀ TÊN NÀY ĐỂ KHỚP VỚI BRIDGE
+    description: "Disk I/O Metrics: io_time, read/write bytes, reads/writes"
+    properties:
+      valueType: "String"
+      readWrite: "RW"
+  - name: "sys_data"
+    description: "System Info: uptime, n_cpus, load_avg"
+    properties:
+      valueType: "String"
+      readWrite: "RW"
+  - name: "proc_data"
+    description: "Process Stats: running, sleeping, zombies, threads"
+    properties:
+      valueType: "String"
+      readWrite: "RW"
+  - name: "gpu_data"
+    description: "GPU Hardware: temp, fan, vram_total"
+    properties:
+      valueType: "String"
+      readWrite: "RW"
+  - name: "gpu_proc_data"
+    description: "GPU Processes: pid, process_name, vram_usage"
+    properties:
+      valueType: "String"
+      readWrite: "RW"
+  - name: "net_data"
+    description: "Network Traffic: tcp_top, ports, rx/tx kb"
+    properties:
+      valueType: "String"
+      readWrite: "RW"

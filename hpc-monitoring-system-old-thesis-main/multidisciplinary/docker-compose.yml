@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # 1. CONTAINER CẦU NỐI (Nhận JSON từ Telegraf -> Là phẳng -> Gửi EdgeX)
+  telegraf-bridge:
+    image: python:3.9-slim
+    container_name: telegraf-bridge
+    volumes:
+      - ./script/json_flattener.py:/app/json_flattener.py
+    command: python3 -u /app/json_flattener.py
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  telegraf-edge:
+    build: .   # Báo cho Compose biết phải đọc Dockerfile ở thư mục hiện tại
+    image: custom-telegraf:latest
+    container_name: telegraf-edge
+    
+    # Chạy container với quyền root tối đa (--privileged)
+    privileged: true
+    
+    # Chia sẻ chung không gian tiến trình với máy Host (--pid=host)
+    pid: "host"
+    
+    # Ánh xạ các thư mục kernel để script tcp_top (eBPF) hoạt động
+    volumes:
+      - /sys/kernel/debug:/sys/kernel/debug:ro
+      - /lib/modules:/lib/modules:ro
+      - /usr/src:/usr/src:ro
+      # Mẹo xịn: Mount thẳng file config và script ra ngoài. 
+      # Sau này sửa code Python hay sửa cấu hình Telegraf, bạn không cần build lại Image!
+      - ./config/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ./script/tcptop.py:/opt/telegraf-scripts/tcptop.py:ro
+    
+    # Bỏ yêu cầu NVIDIA GPU để chạy được trên WSL không có GPU
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu, utility]

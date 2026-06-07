@@ -1,0 +1,14 @@
+[
+    {
+      "apiVersion": "v3",
+      "device": {
+        "name": "Telegraf-Node-01",
+        "description": "GPU Node giám sát MLOps",
+        "adminState": "UNLOCKED",
+        "operatingState": "UP",
+        "serviceName": "device-rest",
+        "profileName": "RPi-REST-Profile-v2",
+        "protocols": { "other": { "Address": "ignored", "Port": "0" } }
+      }
+    }
+]
