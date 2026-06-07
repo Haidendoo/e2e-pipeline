@@ -2,11 +2,11 @@
   {
     "apiVersion": "v3",
     "profile": {
-      "name": "RPi-REST-Profile-v2",
-      "manufacturer": "Raspberry",
-      "model": "Pi4",
-      "labels": ["rpi", "rest", "expanded"],
-      "description": "Expanded profile for Raspberry Pi system metrics (all dynamic counters)",
+      "name": "Telegraf-REST-Profile",
+      "manufacturer": "Telegraf",
+      "model": "Telegraf-Agent",
+      "labels": ["telegraf", "rest", "expanded"],
+      "description": "Expanded profile for Telegraf system metrics",
       "deviceResources": [
         { "name": "Temperature", "description": "CPU temperature in Celsius", "properties": { "valueType": "Float32", "readWrite": "R", "units": "Celsius" } },
         { "name": "CPUUsage", "description": "CPU usage percent", "properties": { "valueType": "Float32", "readWrite": "R", "units": "percent" } },

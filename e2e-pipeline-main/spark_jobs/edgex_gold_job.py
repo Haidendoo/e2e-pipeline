@@ -86,7 +86,28 @@ def main() -> None:
     gold_df.writeTo("local.edgex.edgex_gold").append()
     count = gold_df.count()
     print(f"[Gold] Đã ghi {count} aggregated rows vào edgex_gold.")
+
+    # DUMP DEBUG FILE JSON
+    print("[Gold] Đang xuất file JSON để debug...")
+    try:
+        gold_dump = (
+            spark.table("local.edgex.edgex_gold")
+            .orderBy(F.col("window_start").desc())
+            .limit(100)
+            .withColumn("window_start", F.col("window_start").cast("string"))
+            .withColumn("generated_at", F.col("generated_at").cast("string"))
+        )
+        pandas_df = gold_dump.toPandas()
+                
+        import os
+        os.makedirs("/opt/spark_jobs/logs", exist_ok=True)
+        pandas_df.to_json("/opt/spark_jobs/logs/edgex_gold_debug_output.json", orient="records", indent=2)
+        print("[Gold] Đã xuất file JSON tại: /opt/spark_jobs/logs/edgex_gold_debug_output.json")
+    except Exception as e:
+        print(f"[Gold] Lỗi khi xuất JSON: {e}")
+
     spark.stop()
+
 
 
 if __name__ == "__main__":

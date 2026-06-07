@@ -20,48 +20,33 @@ class TelegrafHandler(BaseHTTPRequestHandler):
             parsed_json = json.loads(raw_text)
             data_list = parsed_json.get('metrics', []) if isinstance(parsed_json, dict) else []
             
-            # Map Telegraf fields to EdgeX RPi-REST-Profile-v2 standard fields
+            # Map Telegraf plugins directly to Telegraf-Full-Node-Profile resources
             metrics_to_send = {}
-            
-            disk_read_sum = 0
-            disk_write_sum = 0
             
             for entry in data_list:
                 plugin_name = entry.get('name')
                 fields = entry.get('fields', {})
                 
-                if plugin_name == "cpu":
-                    if "usage_idle" in fields:
-                        metrics_to_send["CPUUsage"] = str(round(100.0 - float(fields["usage_idle"]), 2))
+                if not fields:
+                    continue
                 
+                if plugin_name == "cpu":
+                    metrics_to_send["cpu_data"] = json.dumps(fields)
                 elif plugin_name == "mem":
-                    if "used" in fields:
-                        metrics_to_send["MemUsed"] = str(fields["used"])
-                    if "available" in fields:
-                        metrics_to_send["MemFree"] = str(fields["available"])
-                        
+                    metrics_to_send["mem_data"] = json.dumps(fields)
                 elif plugin_name == "diskio":
-                    if "read_bytes" in fields:
-                        disk_read_sum += int(fields["read_bytes"])
-                    if "write_bytes" in fields:
-                        disk_write_sum += int(fields["write_bytes"])
-                        
+                    # Co the co nhieu device disk, ta gop lai thanh 1 mang hoac lay cai cuoi
+                    # De don gian lay nguyen mang neu co the hoac luu fields
+                    metrics_to_send["disk_data"] = json.dumps(fields)
                 elif plugin_name == "system":
-                    if "load1" in fields:
-                        metrics_to_send["LoadAvg1"] = str(fields["load1"])
-                        metrics_to_send["LoadAvg5"] = str(fields.get("load5", 0))
-                        metrics_to_send["LoadAvg15"] = str(fields.get("load15", 0))
-                        metrics_to_send["Uptime"] = str(fields.get("uptime", 0))
-                        
+                    metrics_to_send["sys_data"] = json.dumps(fields)
                 elif plugin_name == "processes":
-                    if "proc_total" in fields:
-                        metrics_to_send["ProcessCount"] = str(fields["proc_total"])
-                        metrics_to_send["ThreadCount"] = str(fields.get("total_threads", 0))
+                    metrics_to_send["proc_data"] = json.dumps(fields)
+                elif plugin_name == "nvidia_smi":
+                    metrics_to_send["gpu_data"] = json.dumps(fields)
+                elif plugin_name == "net":
+                    metrics_to_send["net_data"] = json.dumps(fields)
 
-            if disk_read_sum > 0:
-                metrics_to_send["DiskRead"] = str(disk_read_sum)
-            if disk_write_sum > 0:
-                metrics_to_send["DiskWrite"] = str(disk_write_sum)
 
             # Send metrics
             success = 0

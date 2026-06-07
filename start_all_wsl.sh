@@ -43,6 +43,12 @@ docker compose -f docker-compose-no-secty.yml up -d
 echo "⏳ Đợi 20 giây để EdgeX đăng ký Device Profile..."
 sleep 20
 
+# Khởi tạo profile và device cho Telegraf vào EdgeX
+echo "⚙️ Đăng ký Telegraf Device vào EdgeX..."
+cd "$ROOT_DIR/hpc-monitoring-system-old-thesis-main/multidisciplinary/config"
+curl -s -X POST http://localhost:59881/api/v3/deviceprofile/uploadfile -F "file=@telegraf-device.yaml" > /dev/null
+curl -s -X POST http://localhost:59881/api/v3/device -H "Content-Type: application/json" -d @telegraf-device.json > /dev/null
+
 # =====================================================================
 # BƯỚC 4: Khởi động HPC Monitoring (Telegraf Agent)
 # =====================================================================

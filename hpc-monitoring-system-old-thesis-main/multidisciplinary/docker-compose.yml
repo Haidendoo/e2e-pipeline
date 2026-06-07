@@ -5,9 +5,13 @@ services:
   telegraf-bridge:
     image: python:3.9-slim
     container_name: telegraf-bridge
+    ports:
+      - "8085:8080"
     volumes:
       - ./script/json_flattener.py:/app/json_flattener.py
     command: python3 -u /app/json_flattener.py
+    environment:
+      - DEVICE_NAME=Telegraf-Node-01
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

@@ -59,3 +59,15 @@ set_vars.sh
 
 # Spark Checkpoints
 spark_jobs/checkpoints/
+spark_jobs/logs/
+
+# Local Storage & Docker Volumes
+minio_data/
+kafka_data/
+postgres_data/
+influxdb_storage/
+grafana_storage/
+
+# System files
+.DS_Store
+Thumbs.db
