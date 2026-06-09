@@ -57,10 +57,16 @@ cd "$ROOT_DIR/hpc-monitoring-system-old-thesis-main/multidisciplinary"
 docker compose up -d --build
 
 # =====================================================================
-# BƯỚC 5: Kích hoạt Airflow DAG
+# BƯỚC 5: Thiết lập Airflow Connections & Kích hoạt Airflow DAG
 # =====================================================================
-echo -e "\n[5/5] Đang kích hoạt Airflow DAG..."
+echo -e "\n[5/5] Đang thiết lập Airflow Connections & Kích hoạt Airflow DAG..."
 cd "$ROOT_DIR/e2e-pipeline-main"
+
+echo "🔗 Đang thêm các connection vào Airflow..."
+chmod +x connection.sh
+./connection.sh
+
+echo "▶️ Kích hoạt Airflow DAG..."
 docker compose exec -T e2e-pipeline-main-airflow-scheduler-1 airflow dags unpause edgex_system_monitoring_5m 2>/dev/null
 docker exec e2e-pipeline-main-airflow-scheduler-1 airflow dags trigger edgex_system_monitoring_5m 2>/dev/null || true
 

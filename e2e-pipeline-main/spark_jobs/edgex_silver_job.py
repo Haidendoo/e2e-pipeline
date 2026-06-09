@@ -57,8 +57,9 @@ def main() -> None:
             .when(F.col("resource_name") == "sys_data", F.get_json_object(F.col("raw_value"), "$.load1").cast("double"))
             .when(F.col("resource_name") == "proc_data", F.get_json_object(F.col("raw_value"), "$.running").cast("double"))
             .when(F.col("resource_name") == "disk_data", F.get_json_object(F.col("raw_value"), "$.read_bytes").cast("double"))
-            .when(F.col("resource_name") == "net_data", F.get_json_object(F.col("raw_value"), "$.bytes_recv").cast("double"))
+            .when(F.col("resource_name") == "net_data", F.coalesce(F.get_json_object(F.col("raw_value"), "$.bytes_recv"), F.get_json_object(F.col("raw_value"), "$.ip_inreceives")).cast("double"))
             .when(F.col("resource_name") == "gpu_data", F.get_json_object(F.col("raw_value"), "$.utilization_gpu").cast("double"))
+            .when(F.col("resource_name") == "gpu_process_metrics", F.get_json_object(F.col("raw_value"), "$.sm_util").cast("double"))
             .otherwise(F.lit(None).cast("double"))
             .alias("metric_value_num"),
             F.col("value_type"),

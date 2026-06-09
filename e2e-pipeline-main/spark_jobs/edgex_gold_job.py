@@ -22,6 +22,7 @@ Incremental: chỉ xử lý Silver batch_id chưa có trong Gold.
 from __future__ import annotations
 
 from pyspark.sql import functions as F
+from pyspark.sql.types import MapType, StringType, DoubleType
 
 from edgex_common import build_spark_session, ensure_tables, resolve_config
 
@@ -49,12 +50,34 @@ def main() -> None:
         spark.stop()
         return
 
+    NUMERIC_TYPES = {"Float32", "Float64", "Int16", "Int32", "Int64", "Uint8", "Uint16", "Uint32", "Uint64"}
+
     gold_df = (
         pending_silver
-        .filter(F.col("metric_value_num").isNotNull())
+        .withColumn(
+            "parsed_map",
+            F.when(
+                F.col("value_type").isin(*NUMERIC_TYPES),
+                F.create_map(F.lit("value"), F.col("metric_value").cast("double"))
+            ).otherwise(
+                F.from_json(F.col("metric_value"), MapType(StringType(), DoubleType()))
+            )
+        )
+        .select(
+            "*", F.explode_outer("parsed_map").alias("metric_key", "metric_val")
+        )
+        .filter(F.col("metric_val").isNotNull())
         .withColumn("device_name_nn", F.coalesce(F.col("device_name"), F.lit("unknown")))
         .withColumn("profile_name_nn", F.coalesce(F.col("profile_name"), F.lit("unknown")))
-        .withColumn("resource_name_nn", F.coalesce(F.col("resource_name"), F.lit("unknown")))
+        .withColumn(
+            "resource_name_nn", 
+            F.when(
+                F.col("metric_key") == "value", 
+                F.coalesce(F.col("resource_name"), F.lit("unknown"))
+            ).otherwise(
+                F.concat_ws("_", F.coalesce(F.col("resource_name"), F.lit("unknown")), F.col("metric_key"))
+            )
+        )
         .withColumn("window_start_nn", F.coalesce(five_min_window("event_time"), F.current_timestamp()))
         .groupBy(
             "window_start_nn",
@@ -65,9 +88,9 @@ def main() -> None:
         )
         .agg(
             F.count(F.lit(1)).alias("sample_count"),
-            F.coalesce(F.avg("metric_value_num"), F.lit(0.0)).alias("avg_value"),
-            F.coalesce(F.min("metric_value_num"), F.lit(0.0)).alias("min_value"),
-            F.coalesce(F.max("metric_value_num"), F.lit(0.0)).alias("max_value"),
+            F.coalesce(F.avg("metric_val"), F.lit(0.0)).alias("avg_value"),
+            F.coalesce(F.min("metric_val"), F.lit(0.0)).alias("min_value"),
+            F.coalesce(F.max("metric_val"), F.lit(0.0)).alias("max_value"),
         )
         .select(
             F.col("window_start_nn").alias("window_start"),

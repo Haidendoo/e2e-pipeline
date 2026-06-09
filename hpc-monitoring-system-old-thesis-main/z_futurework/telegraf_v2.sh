@@ -6,7 +6,7 @@ sudo tee telegraf.conf > /dev/null <<EOF
 
 [[inputs.execd]]
   command = ["/usr/local/bin/NVML-GPM-Collector"]
-  signal = "STDIN"
+  signal = "SIGTERM"
   data_format = "influx"
 
 [[outputs.http]]

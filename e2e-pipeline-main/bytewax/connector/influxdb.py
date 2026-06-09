@@ -19,37 +19,36 @@ class InfluxSinkPartition(StatelessSinkPartition):
     """Worker-local sink partition that writes flattened sensor data to InfluxDB."""
 
     def _parse_sensor_value(self, value_str: str) -> dict[str, Any]:
-        """Parse nested JSON sensor data from Kafka payload.
+        """Parse JSON sensor data from Kafka payload.
         
-        Kafka sends: {"source_name": '{"field": value, ...}'}
-        We extract and flatten the inner metrics.
+        Supports both:
+        1. Flat JSON: {"field": value, ...}
+        2. Nested JSON: {"source_name": '{"field": value, ...}'}
         """
         try:
             if not isinstance(value_str, str):
                 LOGGER.error("Value is not a string, type=%s value=%s", type(value_str), value_str)
                 return {}
             
-            # First parse: extract outer dict {"cpu_data": "..."}
             outer = json.loads(value_str)
-            LOGGER.debug("Parsed outer JSON keys: %s", list(outer.keys()) if isinstance(outer, dict) else "NOT A DICT")
-            
             if not isinstance(outer, dict):
                 LOGGER.error("Outer parse resulted in non-dict type=%s", type(outer))
                 return {}
             
-            for source_key, metrics_str in outer.items():
-                LOGGER.debug("Processing key=%s type=%s", source_key, type(metrics_str))
-                if isinstance(metrics_str, str):
-                    # Second parse: extract inner metrics
-                    inner_metrics = json.loads(metrics_str)
-                    LOGGER.debug("Extracted metrics from %s: keys=%s values=%s", 
-                                source_key, list(inner_metrics.keys()), inner_metrics)
-                    return inner_metrics
+            res = {}
+            for k, v in outer.items():
+                if isinstance(v, str):
+                    try:
+                        inner = json.loads(v)
+                        if isinstance(inner, dict):
+                            res.update(inner)
+                        else:
+                            res[k] = v
+                    except Exception:
+                        res[k] = v
                 else:
-                    LOGGER.error("Metrics for key %s is not a string, type=%s", source_key, type(metrics_str))
-            
-            LOGGER.error("No string values found in outer dict")
-            return {}
+                    res[k] = v
+            return res
             
         except json.JSONDecodeError as e:
             LOGGER.error("JSON decode error at position %d: %s (input: %s)", 

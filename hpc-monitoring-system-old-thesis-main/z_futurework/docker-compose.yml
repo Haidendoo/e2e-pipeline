@@ -1,5 +1,8 @@
 services:
   telegraf:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: custom-telegraf
     container_name: telegraf-edge
     privileged: true

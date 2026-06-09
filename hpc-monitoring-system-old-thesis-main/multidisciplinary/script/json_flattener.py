@@ -45,7 +45,12 @@ class TelegrafHandler(BaseHTTPRequestHandler):
                 elif plugin_name == "nvidia_smi":
                     metrics_to_send["gpu_data"] = json.dumps(fields)
                 elif plugin_name == "net":
-                    metrics_to_send["net_data"] = json.dumps(fields)
+                    if "net_data" in metrics_to_send:
+                        existing = json.loads(metrics_to_send["net_data"])
+                        existing.update(fields)
+                        metrics_to_send["net_data"] = json.dumps(existing)
+                    else:
+                        metrics_to_send["net_data"] = json.dumps(fields)
 
 
             # Send metrics

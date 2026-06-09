@@ -38,7 +38,7 @@ def resolve_config() -> dict[str, str]:
         "topic": os.getenv("EDGEX_KAFKA_TOPIC", "edgex_system_metrics"),
         "checkpoint_location": os.getenv(
             "EDGEX_CHECKPOINT_LOCATION",
-            f"s3a://{os.getenv('EDGEX_MINIO_BUCKET', os.getenv('MINIO_BUCKET', 'test-bucket'))}/checkpoints/edgex_system_metrics_v2",
+            f"s3a://{os.getenv('EDGEX_MINIO_BUCKET', os.getenv('MINIO_BUCKET', 'test-bucket'))}/checkpoints/edgex_system_metrics_v3",
         ),
     }
 
