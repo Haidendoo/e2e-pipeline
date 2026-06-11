@@ -89,16 +89,16 @@ docker compose up -d
 Wait a few minutes for Airflow and Spark to become healthy. Check with `docker ps`.
 
 ### 3. Start EdgeX IoT Stack & Bridge
-Navigate to the EdgeX directory (where `hpc-monitoring-system-old-thesis-main` is located) and start the edge stack:
+Navigate to the EdgeX directory (where `hpc-monitoring-system` is located) and start the edge stack:
 ```bash
-cd hpc-monitoring-system-old-thesis-main/multidisciplinary
+cd hpc-monitoring-system
 docker compose up -d
 ```
 
 ### 4. Start Telegraf Agent (Data Collection)
 On your host machine (WSL or Linux natively), run Telegraf using the provided configuration:
 ```bash
-telegraf --config hpc-monitoring-system-old-thesis-main/multidisciplinary/config/telegraf.conf
+telegraf --config hpc-monitoring-system/config/telegraf.conf
 ```
 > **Note**: Telegraf must be run natively inside WSL (not via Docker) to correctly execute `nvidia-smi` and read native Linux filesystem/process metrics.
 

@@ -1,4 +1,4 @@
-## Multidisciplinary run guide
+## HPC monitoring system run guide
 
 ### To run EdgeX and register
 
@@ -16,7 +16,7 @@ curl -X POST http://localhost:59881/api/v3/device   -H "Content-Type: applicatio
 Go to this repo
 
 ```bash
-cd multidisciplinary
+cd hpc-monitoring-system
 docker compose up -d --build
 ```
 
