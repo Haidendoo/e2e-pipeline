@@ -259,7 +259,7 @@ b.attach_kretprobe(event="tcp_sendmsg", fn_name="trace_tcp_sendmsg_return")
 b.attach_kprobe(event="tcp_recvmsg", fn_name="trace_tcp_recvmsg_entry")
 b.attach_kretprobe(event="tcp_recvmsg", fn_name="trace_tcp_recvmsg_return")
 
-# Thay thế đoạn bị lỗi (dòng 263-264) bằng:
+# Probe for batch map ops support; older bcc versions lack kernel_struct_has_field.
 htab_batch_ops = False
 try:
     if hasattr(BPF, 'kernel_struct_has_field'):

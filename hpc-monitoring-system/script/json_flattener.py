@@ -3,8 +3,8 @@ import urllib.request
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-# Dùng host.docker.internal để kết nối ra EdgeX chạy trên máy Host từ bên trong Container.
-# Bạn cũng có thể truyền biến môi trường EDGEX_HOST nếu IP của máy bạn khác.
+# host.docker.internal reaches the EdgeX instance on the host from inside the container.
+# Set the EDGEX_HOST environment variable if your host IP is different.
 EDGEX_HOST = os.getenv("EDGEX_HOST", "host.docker.internal")
 EDGEX_PORT = os.getenv("EDGEX_PORT", "59986")
 DEVICE_NAME = os.getenv("DEVICE_NAME", "RPi4-REST-v2")
@@ -35,8 +35,8 @@ class TelegrafHandler(BaseHTTPRequestHandler):
                 elif plugin_name == "mem":
                     metrics_to_send["mem_data"] = json.dumps(fields)
                 elif plugin_name == "diskio":
-                    # Co the co nhieu device disk, ta gop lai thanh 1 mang hoac lay cai cuoi
-                    # De don gian lay nguyen mang neu co the hoac luu fields
+                    # There can be several disk devices; for simplicity just store
+                    # the fields as-is (the last device wins).
                     metrics_to_send["disk_data"] = json.dumps(fields)
                 elif plugin_name == "system":
                     metrics_to_send["sys_data"] = json.dumps(fields)
@@ -64,19 +64,19 @@ class TelegrafHandler(BaseHTTPRequestHandler):
                     with urllib.request.urlopen(req, data=val_str.encode('utf-8')) as f:
                         success += 1
                 except Exception as e:
-                    print(f"Lỗi gửi {res_name}: {e}", flush=True)
+                    print(f"Failed to send {res_name}: {e}", flush=True)
 
             if success > 0:
-                print(f"Đã gửi {success} thông số (chuẩn E2E) lên EdgeX ({DEVICE_NAME})", flush=True)
+                print(f"Sent {success} metrics (E2E format) to EdgeX ({DEVICE_NAME})", flush=True)
 
             self.send_response(200)
             self.end_headers()
         except Exception as e:
-            print(f"Lỗi: {e}", flush=True)
+            print(f"Error: {e}", flush=True)
             self.send_response(500)
             self.end_headers()
 
 if __name__ == '__main__':
     server = HTTPServer(('0.0.0.0', 8080), TelegrafHandler)
-    print(f"Bridge đang chạy và sẽ trỏ tới EdgeX tại http://{EDGEX_HOST}:{EDGEX_PORT}...", flush=True)
+    print(f"Bridge is running, forwarding to EdgeX at http://{EDGEX_HOST}:{EDGEX_PORT}...", flush=True)
     server.serve_forever()

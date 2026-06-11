@@ -1,9 +1,9 @@
-# Sử dụng base image có hỗ trợ NVIDIA (chọn version Ubuntu phù hợp với host của bạn)
+# NVIDIA-enabled base image (pick the Ubuntu version that matches your host)
 FROM nvidia/cuda:12.2.0-base-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Cài đặt các dependencies, bcc-tools và Telegraf
+# Install dependencies, bcc-tools and Telegraf
 RUN apt-get update && apt-get install -y \
     wget \
     gawk \
@@ -18,19 +18,19 @@ RUN apt-get update && apt-get install -y \
     && rm telegraf_1.27.1-1_amd64.deb \
     && rm -rf /var/lib/apt/lists/*
 
-# Setup thư mục scripts
+# Set up the scripts directory
 RUN mkdir -p /opt/telegraf-scripts
 
-# Copy cấu hình và script vào container
+# Copy the config and scripts into the container
 COPY /config/telegraf.conf /etc/telegraf/telegraf.conf
 COPY /script/tcptop.py /opt/telegraf-scripts/tcptop.py
 
-# Cấp quyền thực thi
+# Make the script executable
 RUN chmod +x /opt/telegraf-scripts/tcptop.py
 
-# Cho phép telegraf chạy script python dưới quyền sudo mà không cần mật khẩu
+# Let telegraf run the python scripts with sudo without being asked for a password
 RUN echo "telegraf ALL=(root) NOPASSWD: /usr/bin/python3 /opt/telegraf-scripts/*" > /etc/sudoers.d/telegraf_custom_scripts \
     && chmod 0440 /etc/sudoers.d/telegraf_custom_scripts
 
-# Lệnh khởi chạy Telegraf
+# Start Telegraf
 CMD ["telegraf", "--config", "/etc/telegraf/telegraf.conf"]

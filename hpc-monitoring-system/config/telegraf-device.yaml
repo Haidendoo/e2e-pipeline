@@ -18,7 +18,7 @@ deviceResources:
     properties:
       valueType: "String"
       readWrite: "RW"
-  - name: "disk_data"  # <--- PHẢI LÀ TÊN NÀY ĐỂ KHỚP VỚI BRIDGE
+  - name: "disk_data"  # must keep this exact name so it matches the bridge script
     description: "Disk I/O Metrics: io_time, read/write bytes, reads/writes"
     properties:
       valueType: "String"
