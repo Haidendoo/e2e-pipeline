@@ -1,0 +1,14 @@
+sudo apt update
+sudo apt install git
+
+git config --global user.name "knammm"
+git config --global user.email "nam.nguyenolkmphy@hcmut.edu.vn"
+
+ssh-keygen -t rsa -b 4096 -C "nam.nguyenolkmphy@hcmut.edu.vn"
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+
+cat ~/.ssh/id_rsa.pub
+
+ssh -T git@github.com

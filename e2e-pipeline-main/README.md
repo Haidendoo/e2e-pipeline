@@ -74,22 +74,41 @@ The pipeline maps Telegraf plugins to EdgeX resources in the `Telegraf-Full-Node
 
 ## 🚀 Setup & Execution Guide
 
-### 1. Start Services & Infrastructure (via WSL)
-Open a **WSL Terminal** (or Git Bash/Ubuntu on Windows) and run the automated startup script from the root directory:
+### 1. Prerequisites
+- Docker & Docker Compose
+- WSL2 (Ubuntu/Debian) if running on Windows.
+- NVIDIA Container Toolkit (if GPU metrics are needed).
+- At least 8GB RAM available for Docker.
+
+### 2. Start Data Infrastructure (Airflow, Spark, Kafka, MinIO, Postgres)
+Navigate to the root directory `e2e-pipeline-main` and start the main data services:
 ```bash
-./start_all_wsl.sh
+docker compose -f storage.docker-compose.yaml up -d
+docker compose up -d
 ```
-> *This script automatically orchestrates Airflow, Spark, Kafka, MinIO, Postgres, EdgeX Foundry, and the Bridge components.*
+Wait a few minutes for Airflow and Spark to become healthy. Check with `docker ps`.
 
-### 2. Start Telegraf Agent (Data Collection)
-Open a normal **Windows PowerShell** terminal, navigate to the `multidisciplinary` folder, and run Telegraf inside WSL:
-```powershell
-cd hpc-monitoring-system-old-thesis-main\multidisciplinary
-wsl ./telegraf --config config/telegraf.conf
+### 3. Start EdgeX IoT Stack & Bridge
+Navigate to the EdgeX directory (where `hpc-monitoring-system-old-thesis-main` is located) and start the edge stack:
+```bash
+cd hpc-monitoring-system-old-thesis-main/multidisciplinary
+docker compose up -d
 ```
 
-### 3. View Output Data Locally
-To quickly verify that the pipeline is working, the Silver Spark job automatically outputs a formatted JSON file you can inspect locally:
+### 4. Start Telegraf Agent (Data Collection)
+On your host machine (WSL or Linux natively), run Telegraf using the provided configuration:
+```bash
+telegraf --config hpc-monitoring-system-old-thesis-main/multidisciplinary/config/telegraf.conf
+```
+> **Note**: Telegraf must be run natively inside WSL (not via Docker) to correctly execute `nvidia-smi` and read native Linux filesystem/process metrics.
+
+### 5. Airflow Orchestration
+1. Open the Airflow Web UI at `http://localhost:8082` (User/Pass: `airflow` / `airflow`).
+2. Search for the DAG named `edgex_system_monitoring_5m` and unpause it.
+3. Airflow will trigger the Bronze -> Silver -> Gold Spark jobs automatically every 5 minutes.
+
+### 6. View Output Data Locally
+To quickly verify that the pipeline is working, the Silver job automatically outputs a formatted JSON file you can inspect locally:
 ```text
 D:\e2e-pipeline-main\e2e-pipeline-main\spark_jobs\logs\edgex_silver_debug_output.json
 ```
