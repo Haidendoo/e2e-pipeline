@@ -6,40 +6,41 @@ A complete Big Data engineering stack demonstrating streaming and batch processi
 
 The system captures host metrics (CPU, Memory, Disk, Network, System Load) and GPU metrics (NVIDIA) and flows through a hybrid real-time / batch pipeline:
 
-```text
-[ WSL Host / Edge Node ]
-   1. Telegraf
-        ├── Collects: cpu, mem, diskio, net, system, nvidia_smi
-        └── Outputs: JSON HTTP (localhost:8085)
-             ↓
-   2. Telegraf-Bridge (Python Flask Docker Container)
-        ├── Receives Telegraf JSON payload
-        ├── Flattens & Maps to EdgeX resources (cpu_data, gpu_data, etc.)
-        └── HTTP POST -> EdgeX device-rest API
-             ↓
-[ EdgeX Ecosystem ]
-   3. EdgeX Foundry
-        ├── device-rest (receives data)
-        ├── core-data (validates against Telegraf-Full-Node-Profile)
-        ├── Redis MessageBus
-        └── app-service (MQTT Export)
-             ↓
-[ Streaming & Storage ]
-   4. MQTT to Kafka Bridge
-        └── Pushes data to Kafka topic: edgex_system_metrics
-             ↓
-[ Batch Processing / Lakehouse ]
-   5. Apache Airflow (Scheduler)
-        └── Triggers Spark Jobs every 5 minutes (edgex_system_monitoring_5m DAG)
-             ↓
-   6. Apache Spark & Iceberg (Medallion Architecture)
-        ├── Bronze Job: Ingests raw JSON from Kafka, explodes EdgeX readings.
-        ├── Silver Job: Parses nested metric strings into native Doubles.
-        └── Gold Job: Aggregates metrics by 5-minute windows (avg, max, min).
-             ↓
-[ Presentation ]
-   7. Trino & Grafana
-        └── Dashboards query the Iceberg Gold tables via Trino.
+```mermaid
+graph TD
+    subgraph Edge ["WSL Host / Edge Node"]
+        T["Telegraf (CPU, GPU, etc.)"] -->|JSON HTTP| TB["Telegraf-Bridge (Python)"]
+    end
+
+    subgraph Middleware ["EdgeX Ecosystem"]
+        TB -->|REST API| EXF["EdgeX Foundry (Core Data)"]
+        EXF -->|MQTT Export| AS["App Service"]
+    end
+
+    subgraph Streaming ["Streaming & Storage"]
+        AS -->|MQTT| MKB["MQTT to Kafka Bridge"]
+        MKB -->|Kafka Topic| KT["edgex_system_metrics"]
+    end
+
+    subgraph RealTime ["Real-time Observability"]
+        KT --> BW["Bytewax (Stream Processor)"]
+        BW --> INF[(InfluxDB)]
+    end
+
+    subgraph Lakehouse ["Lakehouse (Medallion Architecture)"]
+        AF["Apache Airflow"] -.-> SJ["Apache Spark Jobs"]
+        KT --> SJ
+        SJ --> Bronze["Bronze Layer (Raw)"]
+        Bronze --> Silver["Silver Layer (Cleaned)"]
+        Silver --> Gold["Gold Layer (Aggregated)"]
+        Gold --> Iceberg[("Apache Iceberg / MinIO")]
+    end
+
+    subgraph Presentation ["Presentation Layer"]
+        Iceberg --> Trino["Trino SQL Engine"]
+        Trino --> Grafana["Grafana Dashboards"]
+        INF --> Grafana
+    end
 ```
 
 ## 📋 Data Schema & Resource Mapping

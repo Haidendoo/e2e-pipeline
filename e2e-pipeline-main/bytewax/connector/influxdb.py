@@ -143,11 +143,10 @@ class InfluxSinkPartition(StatelessSinkPartition):
             if isinstance(value, bool):
                 point = point.field(key, value)
                 fields_added += 1
-            elif isinstance(value, int):
-                point = point.field(key, value)
-                fields_added += 1
-            elif isinstance(value, float):
-                point = point.field(key, value)
+            elif isinstance(value, (int, float)):
+                # Cast all numeric values to float to avoid InfluxDB field type conflicts
+                # (e.g. if 'load15' is sometimes 1 and sometimes 1.5)
+                point = point.field(key, float(value))
                 fields_added += 1
             elif isinstance(value, str):
                 point = point.field(f"{key}_str", value)
