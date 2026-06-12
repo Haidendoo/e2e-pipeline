@@ -1,5 +1,5 @@
 import json
-with open('d:\\e2e-pipeline-main\\e2e-pipeline-main\\grafana-provisioning\\dashboards\\edgex_system_monitoring.json', 'r', encoding='utf-8') as f:
+with open('./e2e-pipeline-main/grafana-provisioning/dashboards/edgex_system_monitoring.json', 'r', encoding='utf-8') as f:
     dashboard = json.load(f)
 
 for panel in dashboard.get('panels', []):

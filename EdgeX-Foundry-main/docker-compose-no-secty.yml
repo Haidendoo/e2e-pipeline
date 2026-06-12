@@ -678,12 +678,12 @@ services:
       MQTT_BROKER_HOST: edgex-mqtt-broker
       MQTT_BROKER_PORT: "1883"
       MQTT_TOPIC: edgex_system_metrics_raw
-      KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:9094
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_TOPIC: edgex_system_metrics
       BRIDGE_CLIENT_ID: edgex-mqtt-kafka-bridge
     command: >-
       bash -c "
-        pip install paho-mqtt kafka-python --quiet &&
+        pip install paho-mqtt kafka-python-ng --quiet &&
         python /bridge/mqtt_to_kafka_bridge.py
       "
     volumes:
@@ -694,6 +694,7 @@ services:
     hostname: edgex-mqtt-kafka-bridge
     networks:
       - edgex-network
+      - e2e-pipeline-main_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: always
@@ -733,6 +734,8 @@ networks:
   edgex-network:
     name: edgex_edgex-network
     driver: bridge
+  e2e-pipeline-main_default:
+    external: true
 volumes:
   db-data:
     name: edgex_db-data
