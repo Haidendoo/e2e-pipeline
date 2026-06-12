@@ -183,53 +183,33 @@ static int tcp_stat(int size, bool is_send)
     return 0;
 }
 
-KRETFUNC_PROBE(tcp_sendmsg, struct sock *sk, struct msghdr *msg, size_t size, int ret)
+int trace_tcp_sendmsg_entry(struct pt_regs *ctx, struct sock *sk)
 {
-    if (ret > 0)
-        return tcp_stat(ret, true);
-    else
-        return 0;
-}
-
-KFUNC_PROBE(tcp_sendmsg, struct sock *sk, struct msghdr *msg, size_t size)
-{
-    if (container_should_be_filtered()) {
-        return 0;
-    }
-    u32 pid = bpf_get_current_pid_tgid() >> 32;
-    FILTER_PID
     u32 tid = bpf_get_current_pid_tgid();
-    u16 family = sk->__sk_common.skc_family;
-    FILTER_FAMILY
     sock_send.update(&tid, &sk);
     return 0;
 }
 
-/*
- * tcp_recvmsg() would be obvious to trace, but is less suitable because:
- * - we'd need to trace both entry and return, to have both sock and size
- * - misses tcp_read_sock() traffic
- * we'd much prefer tracepoints once they are available.
- */
-KRETFUNC_PROBE(tcp_recvmsg, struct sock *sk, struct msghdr *msg, size_t len, int flags, int *addr_len, int ret)
+int trace_tcp_sendmsg_return(struct pt_regs *ctx)
 {
+    int ret = PT_REGS_RC(ctx);
     if (ret > 0)
-        return tcp_stat(ret, false);
-    else
-        return 0;
+        return tcp_stat(ret, true);
+    return 0;
 }
 
-KFUNC_PROBE(tcp_recvmsg, struct sock *sk, struct msghdr *msg, size_t len, int flags, int *addr_len)
+int trace_tcp_recvmsg_entry(struct pt_regs *ctx, struct sock *sk)
 {
-    if (container_should_be_filtered()) {
-        return 0;
-    }
-    u32 pid = bpf_get_current_pid_tgid() >> 32;
-    FILTER_PID
     u32 tid = bpf_get_current_pid_tgid();
-    u16 family = sk->__sk_common.skc_family;
-    FILTER_FAMILY
     sock_recv.update(&tid, &sk);
+    return 0;
+}
+
+int trace_tcp_recvmsg_return(struct pt_regs *ctx)
+{
+    int ret = PT_REGS_RC(ctx);
+    if (ret > 0)
+        return tcp_stat(ret, false);
     return 0;
 }
 """
@@ -274,9 +254,18 @@ def get_ipv6_session_key(k):
 # initialize BPF
 b = BPF(text=bpf_text)
 
-# check whether hash table batch ops is supported
-htab_batch_ops = True if BPF.kernel_struct_has_field(b'bpf_map_ops',
-        b'map_lookup_and_delete_batch') == 1 else False
+b.attach_kprobe(event="tcp_sendmsg", fn_name="trace_tcp_sendmsg_entry")
+b.attach_kretprobe(event="tcp_sendmsg", fn_name="trace_tcp_sendmsg_return")
+b.attach_kprobe(event="tcp_recvmsg", fn_name="trace_tcp_recvmsg_entry")
+b.attach_kretprobe(event="tcp_recvmsg", fn_name="trace_tcp_recvmsg_return")
+
+# Probe for batch map ops support; older bcc versions lack kernel_struct_has_field.
+htab_batch_ops = False
+try:
+    if hasattr(BPF, 'kernel_struct_has_field'):
+        htab_batch_ops = True if BPF.kernel_struct_has_field(b'bpf_map_ops', b'map_lookup_and_delete_batch') == 1 else False
+except:
+    htab_batch_ops = False
 
 # attached with fentry/exit macros
 
@@ -284,8 +273,6 @@ ipv4_send_bytes = b["ipv4_send_bytes"]
 ipv4_recv_bytes = b["ipv4_recv_bytes"]
 ipv6_send_bytes = b["ipv6_send_bytes"]
 ipv6_recv_bytes = b["ipv6_recv_bytes"]
-
-print('Tracing... Output every %s secs. Hit Ctrl-C to end' % args.interval)
 
 i = 0
 exiting = False
@@ -318,7 +305,7 @@ while i!= args.count and not exiting:
         # Avoid Influx Parsing error in the name of process
         comm = k.name.decode('utf-8', 'ignore').replace(' ', '_').replace(',', '\,')
 
-        output = "tcp_top,pid={},comm={},laddr={},lport={},raddr={},dport={} rx_kb={},tx_kb={}".format(
+        output = "tcp_top pid=\"{}\",comm=\"{}\",laddr=\"{}\",lport=\"{}\",raddr=\"{}\",dport=\"{}\",rx_kb={},tx_kb={}".format(
             k.pid,
             comm,
             k.laddr,
@@ -352,7 +339,7 @@ while i!= args.count and not exiting:
                                               reverse=True):
         safe_comm = k.name.decode('utf-8', 'ignore').replace(' ', '_').replace(',', '\,')
         
-        output = "tcp_top,pid={},comm={},laddr={},lport={},raddr={},dport={} rx_kb={},tx_kb={}".format(
+        output = "tcp_top pid=\"{}\",comm=\"{}\",laddr=\"{}\",lport=\"{}\",raddr=\"{}\",dport=\"{}\",rx_kb={},tx_kb={}".format(
             k.pid,
             safe_comm,
             k.laddr,

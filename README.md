@@ -82,9 +82,9 @@ Open a **WSL Terminal** (or Git Bash/Ubuntu on Windows) and run the automated st
 > *This script automatically orchestrates Airflow, Spark, Kafka, MinIO, Postgres, EdgeX Foundry, and the Bridge components.*
 
 ### 2. Start Telegraf Agent (Data Collection)
-Open a normal **Windows PowerShell** terminal, navigate to the `multidisciplinary` folder, and run Telegraf inside WSL:
+Open a normal **Windows PowerShell** terminal, navigate to the `hpc-monitoring-system` folder, and run Telegraf inside WSL:
 ```powershell
-cd hpc-monitoring-system-old-thesis-main\multidisciplinary
+cd hpc-monitoring-system
 wsl ./telegraf --config config/telegraf.conf
 ```
 
