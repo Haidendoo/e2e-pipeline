@@ -7,7 +7,7 @@ ROOT_DIR=$(pwd)
 
 # Bước 1: Dừng HPC Monitoring
 echo -e "\n[1/3] Đang dừng HPC Monitoring..."
-cd $ROOT_DIR/hpc-monitoring-system-old-thesis-main/multidisciplinary
+cd $ROOT_DIR/hpc-monitoring-system
 docker compose down
 
 # Bước 2: Dừng EdgeX Foundry

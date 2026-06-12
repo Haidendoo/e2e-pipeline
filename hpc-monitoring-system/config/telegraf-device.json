@@ -3,7 +3,7 @@
       "apiVersion": "v3",
       "device": {
         "name": "Telegraf-Node-01",
-        "description": "GPU Node giám sát MLOps",
+        "description": "GPU node for MLOps monitoring",
         "adminState": "UNLOCKED",
         "operatingState": "UP",
         "serviceName": "device-rest",
